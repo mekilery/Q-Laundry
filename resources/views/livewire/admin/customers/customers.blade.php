@@ -54,13 +54,6 @@
                                         </td>
                                         <td>
                                             <a data-bs-toggle="modal" data-bs-target="#editcustomer"
-                                                wire:click="orders({{ $row->id }})" type="button"
-                                                class="badge badge-xs badge-warning fw-600 text-xs">
-                                                {{ $lang->data['orders'] ?? 'orders' }}
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a data-bs-toggle="modal" data-bs-target="#editcustomer"
                                                 wire:click="edit({{ $row->id }})" type="button"
                                                 class="badge badge-xs badge-warning fw-600 text-xs">
                                                 {{ $lang->data['edit'] ?? 'Edit' }}
