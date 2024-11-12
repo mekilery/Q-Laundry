@@ -14,4 +14,5 @@ class Customer extends Model
         'is_active',
         'created_by'
     ];
+    
 }

@@ -354,25 +354,14 @@
                                         </button>
                                     </div>
                                     
-                                    <div class="col-6 mx-2 mb-1 " >
-                                        <label
-                                            class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label>
+                                    <div class="col-6 mx-2 mb-1"> 
+                                        <label class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label> 
                                         <select class="form-select" wire:model="payment_type">
-                                            <option value="">
-                                                {{ $lang->data['choose_payment_mode'] ?? 'Choose Payment Mode' }}
-                                            </option>
-                                            <option class="select-box" value="1">
-                                                {{ $lang->data['cash'] ?? 'Cash' }}</option>
-                                            <option class="select-box" value="2">{{ $lang->data['benefit'] ?? 'Benefit Pay' }}
-                                            </option>
-                                            <option class="select-box" value="3">
-                                                {{ $lang->data['card'] ?? 'Card' }}</option>
-                                            <option class="select-box" value="4">
-                                                {{ $lang->data['cheque'] ?? 'Cheque' }}</option>
-                                            <option class="select-box" value="5">
-                                                {{ $lang->data['bank_transfer'] ?? 'Bank Transfer' }}</option>
-                                        </select>
-                                    </div>
+                                             <option value="">{{ $lang->data['choose_payment_mode'] ?? 'Choose Payment Mode' }}</option>
+                                              @foreach($paymentTypes as $paymentType) 
+                                              <option class="select-box" value="{{ $paymentType->id }}">{{ $paymentType->name }}</option>
+                                               @endforeach </select> 
+                                            </div>
                                     @error('paid_amount')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror

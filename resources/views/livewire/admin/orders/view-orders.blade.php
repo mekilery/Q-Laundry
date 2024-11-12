@@ -265,21 +265,11 @@
                                         <div class="col-md-6 mb-1">
                                             <label
                                                 class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label>
-                                            <select class="form-select" wire:model="payment_mode">
-                                                <option value="">
-                                                    {{ $lang->data['choose_payment_type'] ?? 'Choose Payment Type' }}
-                                                </option>
-                                                <option class="select-box" value="1">
-                                                    {{ $lang->data['cash'] ?? 'Cash' }}</option>
-                                                <option class="select-box" value="2">
-                                                    {{ $lang->data['upi'] ?? 'BENEFIT' }}</option>
-                                                <option class="select-box" value="3">
-                                                    {{ $lang->data['card'] ?? 'Card' }}</option>
-                                                <option class="select-box" value="4">
-                                                    {{ $lang->data['cheque'] ?? 'Cheque' }}</option>
-                                                <option class="select-box" value="5">
-                                                    {{ $lang->data['bank_transfer'] ?? 'Bank Transfer' }}</option>
-                                            </select>
+                                            <select class="form-select" wire:model="payment_type">
+                                                <@foreach($paymentTypes as $paymentType) 
+                                                <option class="select-box" value="{{ $paymentType->id }}">{{ $paymentType->name }}</option>
+                                                 @endforeach 
+                                                </select> 
                                             @error('payment_mode')
                                                 <span class="error text-danger">{{ $message }}</span>
                                             @enderror

@@ -20,7 +20,6 @@ class CreatePaymentsTable extends Migration
             $table->string('customer_name')->nullable();
             $table->unsignedBigInteger('order_id');
             $table->double('received_amount',15,3)->default(0);
-            $table->integer('payment_type');
             $table->longText('payment_note')->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('financial_year_id')->nullable();

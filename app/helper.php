@@ -3,6 +3,8 @@
 
 use App\Models\Customer;
 use App\Models\Order;
+use App\Models\PaymentType;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use Twilio\Rest\Client;
 
@@ -38,24 +40,13 @@ function getExpenseCategoryType($type)
     }
 }
 /* get payment mode */
-function getpaymentMode($type)
-{
-    switch($type)
-    {
-        case 1:
-            return 'CASH';
-        case 2:
-            return 'BENEFIT';
-        case 3:
-            return 'CARD';
-        case 4:
-            return 'CHEQUE';
-        case 5:
-            return 'BANK TRANSFER';
-        default:
-            return '';
-    }
-}
+function getpaymentMode($type) { 
+    // Check if payment types are cached 
+    $paymentTypes = Cache::remember('payment_types', 60, function () { 
+        return PaymentType::all()->keyBy('id'); 
+    }); // Return the payment type name if found, otherwise return an empty string return 
+    $paymentTypes->has($type) ? $paymentTypes->get($type)->name : '';
+ }
 /* get financial year */
 function getFinancialYearId() {
     $settings = new App\Models\MasterSettings();

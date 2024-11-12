@@ -14,7 +14,7 @@ class CreateCustomersTable extends Migration
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->increments('id'); // Use increments instead of id
+            $table->id();
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('phone');
@@ -25,13 +25,11 @@ class CreateCustomersTable extends Migration
             $table->timestamps();
         });
 
-        // Add a trigger to format the ID to 4 digits
-        DB::unprepared('
-            CREATE TRIGGER format_customer_id BEFORE INSERT ON customers FOR EACH ROW
-            BEGIN
-                SET NEW.id = LPAD(NEW.id, 4, "0");
-            END
-        ');
+        // Add a trigger to format the ID to 4 digits 
+        DB::unprepared(' CREATE TRIGGER format_customer_id 
+        BEFORE INSERT ON customers FOR EACH ROW BEGIN IF NEW.id < 1000 THEN SET NEW.id = LPAD(NEW.id, 4, "0"); 
+        END IF; 
+        END ');
     }
 
     /**
@@ -39,8 +37,10 @@ class CreateCustomersTable extends Migration
      *
      * @return void
      */
-    public function down()
-    {
-        Schema::dropIfExists('customers');
+    
+     public function down() { 
+        // Drop the trigger 
+        DB::unprepared('DROP TRIGGER IF EXISTS format_customer_id'); 
+        Schema::dropIfExists('customers'); 
     }
 }

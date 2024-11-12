@@ -8,6 +8,7 @@ use App\Models\Service;
 use App\Models\ServiceDetail;
 use App\Models\ServiceType;
 use App\Models\Translation;
+use App\Models\PaymentType;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -31,6 +32,7 @@ class AddOrders extends Component
         $this->addons = Addon::where('is_active',1)->latest()->get();
         $this->delivery_date = Carbon::today()->toDateString();
         $this->tax_percent = getTaxPercentage();
+        $this->paymentTypes = PaymentType::where('is_active', 1)->get();
         $this->generateOrderID();
         if(session()->has('selected_language'))
         {

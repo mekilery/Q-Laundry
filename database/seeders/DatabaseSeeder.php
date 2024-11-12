@@ -25,6 +25,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             MasterControlSeeder::class,
             CountryControlSeeder::class,
+            PaymentTypesSeeder::class,
+            ServiceTypesTableSeeder::class
         ]);
        
     }

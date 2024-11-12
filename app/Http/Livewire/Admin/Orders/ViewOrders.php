@@ -3,6 +3,7 @@ namespace App\Http\Livewire\Admin\Orders;
 use Livewire\Component;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\PaymentType;
 use App\Models\Customer;
 use Auth;
 use App\Models\Translation;
@@ -12,7 +13,7 @@ class ViewOrders extends Component
 {
     public $orders;
     public $paid_amount,$customer,$customer_name,$search_query;
-    public $order,$amount_to_pay,$note,$balance,$payment_mode,$order_filter,$lang;
+    public $order,$amount_to_pay,$note,$balance,$payment_type,$order_filter,$lang,$deleted_at;
     public $nextCursor;
     protected $currentCursor;
     public $hasMorePages;
@@ -50,9 +51,16 @@ class ViewOrders extends Component
                $this->reloadOrders();
             }
             else{
+                $this->orders = \App\Models\Order::where('status',$this->order_filter)
+                                            ->where(function($q) use ($value) {
+                                                $q->where('order_number','like','%'.$value.'%')
+                                                ->orwhere('customer_name','like','%'.$value.'%');
+                                            })
+                                            ->latest()
+                                            ->get();
                 /* if order filter has data*/
 
-                if(Auth::user()->user_type==1)
+            /*  if(Auth::user()->user_type==1)
                 {
 
                 $this->orders = \App\Models\Order::where('status',$this->order_filter)
@@ -70,8 +78,8 @@ class ViewOrders extends Component
                                             })
                                             ->latest()
                                             ->get();
-                                        }
-            }
+                                        }*/
+                }
         }
         elseif($name == 'search_query' && $value == '')
         {
@@ -80,12 +88,13 @@ class ViewOrders extends Component
                 $this->reloadOrders();
             }
             else{
-                if(Auth::user()->user_type==1)
+                $this->orders = \App\Models\Order::where('status',$this->order_filter)->latest()->get();
+            /*    if(Auth::user()->user_type==1)
                 {
                     $this->orders = \App\Models\Order::where('status',$this->order_filter)->latest()->get();
                 } else {
                     $this->orders = \App\Models\Order::where('created_by',Auth::user()->id)->where('status',$this->order_filter)->latest()->get();
-                }
+                }*/
             }
         }
         /* if the updated element is order_filter */
@@ -97,12 +106,13 @@ class ViewOrders extends Component
                 $this->reloadOrders();
             }
             else{
-                if(Auth::user()->user_type==1)
+                $this->orders = \App\Models\Order::where('status',$value)->latest()->get();
+            /*  if(Auth::user()->user_type==1)
                 {
                     $this->orders = \App\Models\Order::where('status',$value)->latest()->get();
                 } else {
                     $this->orders = \App\Models\Order::where('created_by',Auth::user()->id)->where('status',$value)->latest()->get();
-                }
+                }*/
                 
             }
         }
@@ -112,6 +122,7 @@ class ViewOrders extends Component
         $this->order = Order::where('id',$id)->first();
         $this->customer = Customer::where('id',$this->order->customer_id)->first();
         $this->customer_name = $this->customer->name ?? null;
+        $this->paymentTypes = PaymentType::where('is_active', 1)->get();
         $this->paid_amount = Payment::where('order_id',$this->order->id)->sum('received_amount');
         $this->balance = number_format($this->order->total - $this->paid_amount,2);
     }
@@ -120,7 +131,7 @@ class ViewOrders extends Component
         $this->balance = '';
         $this->order = '';
         $this->customer = '';
-        $this->payment_mode = "";
+        $this->payment_type = "";
     }
     /* add paymentinformation */
     public function addPayment() {
@@ -141,7 +152,7 @@ class ViewOrders extends Component
             return 0;
         }
         $this->validate([
-            'payment_mode' => 'required',
+            'payment_type' => 'required',
         ]);
         /* if any balance */
         if($this->balance)
@@ -151,7 +162,7 @@ class ViewOrders extends Component
                 'customer_id'   => $this->customer->id ?? null,
                 'customer_name' => $this->customer->name ?? null,
                 'order_id'  => $this->order->id,
-                'payment_type'  => $this->payment_mode,
+                'payment_type'  => $this->payment_type,
                 'payment_note'  => $this->note,
                 'financial_year_id' => getFinancialYearId(),
                 'received_amount'   => $this->balance,
@@ -174,6 +185,7 @@ class ViewOrders extends Component
     }
     public function loadOrders()
     {
+        $this->orders = Order::whereNull('deleted_at')->get();
         if ($this->hasMorePages !== null  && ! $this->hasMorePages) {
             return;
         }
@@ -199,13 +211,28 @@ class ViewOrders extends Component
         }
         $this->currentCursor = $orders->cursor();
     }
+    public function delete($id) 
+    { $order = Order::find($id); if ($order) { $order->delete();
+         // Perform a soft delete 
+         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Order was marked as deleted!']); 
+         $this->loadOrders(); 
+         // Refresh the orders collection excluding soft-deleted records 
+         } 
+         else { 
+            $this->dispatchBrowserEvent('alert', [ 'type' => 'success', 'message' => "Order {$order->order_number} for customer {$order->customer_name} Has been deleted!" ]);}
+    }
     public function filterdata()
     {
         if($this->search_query || $this->search_query != '')
         {
             if($this->order_filter || $this->order_filter != '')
             {
-                if(Auth::user()->user_type==1)
+                $orders = \App\Models\Order::where('order_number','like','%'.$this->search_query.'%')
+                ->orwhere('customer_name','like','%'.$this->search_query.'%')
+                ->where('status',$this->order_filter)
+                ->latest()
+                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
+            /*  if(Auth::user()->user_type==1)
                 {
                 $orders = \App\Models\Order::where('order_number','like','%'.$this->search_query.'%')
                 ->orwhere('customer_name','like','%'.$this->search_query.'%')
@@ -218,11 +245,16 @@ class ViewOrders extends Component
                     ->where('status',$this->order_filter)
                     ->latest()
                     ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                }
+                }*/
                 return $orders;
             }
             else{
-                if(Auth::user()->user_type==1)
+                $orders = \App\Models\Order::where('order_number','like','%'.$this->search_query.'%')
+                ->orwhere('customer_name','like','%'.$this->search_query.'%')
+                ->latest()
+                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
+                
+                /*if(Auth::user()->user_type==1)
                 {
                 $orders = \App\Models\Order::where('order_number','like','%'.$this->search_query.'%')
                 ->orwhere('customer_name','like','%'.$this->search_query.'%')
@@ -233,16 +265,20 @@ class ViewOrders extends Component
                     ->orwhere('customer_name','like','%'.$this->search_query.'%')
                     ->latest()
                     ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                }
+                }*/
                 return $orders;
             }
         }
         else{
             if($this->order_filter || $this->order_filter != '')
             {
+                $orders = \App\Models\Order::where('status',$this->order_filter)
+                    ->latest()
+                    ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
+                
                 
 
-                if(Auth::user()->user_type==1)
+                /*if(Auth::user()->user_type==1)
                 {
                     $orders = \App\Models\Order::where('status',$this->order_filter)
                     ->latest()
@@ -251,19 +287,22 @@ class ViewOrders extends Component
                     $orders = \App\Models\Order::where('created_by',Auth::user()->id)->where('status',$this->order_filter)
                     ->latest()
                     ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                }
+                }*/
 
                 return $orders;
             }
             else{
-                if(Auth::user()->user_type==1)
+                $orders = \App\Models\Order::latest()
+                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
+                
+                /*if(Auth::user()->user_type==1)
                 {
                     $orders = \App\Models\Order::latest()
                 ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
                 } else {
                     $orders = \App\Models\Order::where('created_by',Auth::user()->id)->latest()
                 ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                }
+                }*/
 
                 
                 return $orders;
