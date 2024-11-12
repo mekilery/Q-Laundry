@@ -46,6 +46,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ Request::is('admin/customers*') ? 'active' : '' }}" href="{{route('admin.customers')}}">
+                        <div class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center">
+                            <i class="ni ni-single-02 text-pink text-sm opacity-10"></i>
+                        </div>
+                        <span class="nav-link-text ms-1">{{$lang->data['customers'] ?? 'Customers'}}</span>
+                    </a>
+                </li>
+                @if(Auth::user()->user_type==1)
+                <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#expense" class="nav-link {{ Request::is('admin/expense*') ? 'active' : '' }}" aria-controls="settings" role="button" aria-expanded="false">
                         <div class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center">
                             <i class="ni ni-single-copy-04 text-danger text-sm opacity-10"></i>
@@ -69,15 +78,6 @@
                         </ul>
                     </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Request::is('admin/customers*') ? 'active' : '' }}" href="{{route('admin.customers')}}">
-                        <div class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center">
-                            <i class="ni ni-single-02 text-pink text-sm opacity-10"></i>
-                        </div>
-                        <span class="nav-link-text ms-1">{{$lang->data['customers'] ?? 'Customers'}}</span>
-                    </a>
-                </li>
-                @if(Auth::user()->user_type==1)
                 <li class="nav-item">
                     <a data-bs-toggle="collapse" href="#services" class="nav-link  {{ Request::is('admin/service*') ? 'active' : '' }}" aria-controls="settings" role="button" aria-expanded="false">
                         <div class="icon icon-shape icon-sm text-center d-flex align-items-center justify-content-center">
@@ -166,6 +166,9 @@
                                     <span class="sidenav-normal side-bar-inner">{{$lang->data['financial_year'] ?? 'Financial Year'}} </span>
                                 </a>
                             </li>
+                            <li class="nav-item "> <a class="nav-link {{ Request::is('admin/settings/payment-types') ? 'active' : '' }}" href="{{ route('admin.payment_types_settings') }}">
+                                <span class="sidenav-mini-icon side-bar-inner"> P </span> 
+                                <span class="sidenav-normal side-bar-inner">{{ $lang->data['payment_types'] ?? 'Payment Types' }} </span> </a> </li>
                             <li class="nav-item ">
                                 <a class="nav-link  {{ Request::is('admin/settings/translations') ? 'active' : '' }}" href="{{route('admin.translations')}}">
                                     <span class="sidenav-mini-icon side-bar-inner"> T </span>

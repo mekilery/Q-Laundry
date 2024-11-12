@@ -1,6 +1,8 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\InstallController; 
+use App\Http\Controllers\InstallController;
+use App\Http\Livewire\Admin\Settings\PaymentTypesSettings; 
+
 /* login */
 Route::group(['middleware' => ['installed']], function () {
 Route::get('/',[\App\Http\Livewire\Login::class, '__invoke'])->middleware('installed')->name('login');
@@ -48,6 +50,7 @@ Route::group(['prefix' => 'admin','middleware' => ['store','installed']], functi
     Route::get('file-tools', \App\Http\Livewire\Admin\Settings\FileTools::class)->name('admin.filetools');
     Route::get('sms', \App\Http\Livewire\Admin\Settings\SMSSettings::class)->name('admin.sms');
     Route::get('staff', \App\Http\Livewire\Admin\Staff\Staff::class)->name('admin.staff');
+    Route::get('payment-types-settings', \App\Http\Livewire\Admin\Settings\PaymentTypesSettings::class)->name('admin.payment_types_settings');
     });
     /* reports section */
     Route::group(['prefix' => 'reports/','middleware' => 'admin'], function () {
