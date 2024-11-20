@@ -14,10 +14,10 @@
                             </div>
                             <div class="card-body px-lg-5 pt-0" x-data="{resetpassword : false,success:@entangle('success')}" x-transition.fade>
                                 <div class="" x-show="resetpassword == false" >
-                                    <div class="text-muted mb-4">
+                                    <div class="text-muted mb-4" style="text-align:center;">
                                         <small>Login to Continue</small>
                                     </div>
-                                    <form role="form" class="text-start" wire:submit.prevent="login">
+                                    <form role="form" class="text-center" wire:submit.prevent="login">
                                         <div class="mb-3">
                                             <input type="email" class="form-control" placeholder="Email" wire:model="email">
                                             @error('email') <span class="text-danger">{{ $message }}</span> @enderror
@@ -36,8 +36,12 @@
                                             <button type="submit" class="btn btn-primary w-100 my-4 mb-4">Login</button>
                                         </div>
                                         <div class="mb-2 position-relative text-center">
-                                            <p class="text-sm fw-500 mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
-                                                Powered by <a href="https://qalarmedia.com" class="text-dark fw-600" target="_blank">Qalar Media</a>
+                                            <p class="text-sm fw-300 mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
+                                                Powered by 
+                                            </p>
+                                            <br>
+                                            <p class="mb-2 text-secondary z-index-2 bg-white px-3">
+                                                <a href="https://qalarmedia.com" class="text-lg text-dark fw-600" target="_blank">QALAR MEDIA</a>
                                             </p>
                                         </div>
                                         @if($forgetpassword == 1)
@@ -60,9 +64,13 @@
                                                 <button type="button" wire:click="forgotpassword" class="btn btn-primary w-100 my-4 mb-4">Send Reset Link</button>
                                             </div>
 
-                                            <div class="mb-2 position-relative text-center">
-                                                <p class="text-sm fw-500 mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
-                                                    Powered by <a href="{{url('/')}}" class="text-dark fw-600" target="_blank">{{ getApplicationName() }}</a>
+                                            <<div class="mb-2 position-relative text-center">
+                                                <p class="text-sm fw-300 mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
+                                                    Powered by 
+                                                </p>
+                                                <br>
+                                                <p class="mb-2 text-secondary z-index-2 bg-white px-3">
+                                                    <a href="https://qalarmedia.com" class="text-lg text-dark fw-600" target="_blank">QALAR MEDIA</a>
                                                 </p>
                                             </div>
                                         <p class="text-center"> <a href="" class="text-center  text-primary-faded" @click.prevent="resetpassword = false">I Know My Password</a></p>
