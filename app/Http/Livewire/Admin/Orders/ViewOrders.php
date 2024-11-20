@@ -5,7 +5,7 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PaymentType;
 use App\Models\Customer;
-use Auth;
+use illuminate\Support\Facades\Auth;
 use App\Models\Translation;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Pagination\Cursor;
@@ -51,7 +51,7 @@ class ViewOrders extends Component
                $this->reloadOrders();
             }
             else{
-                $this->orders = \App\Models\Order::where('status',$this->order_filter)
+                $this->orders = Order::where('status',$this->order_filter)
                                             ->where(function($q) use ($value) {
                                                 $q->where('order_number','like','%'.$value.'%')
                                                 ->orwhere('customer_name','like','%'.$value.'%')
@@ -90,7 +90,7 @@ class ViewOrders extends Component
                 $this->reloadOrders();
             }
             else{
-                $this->orders = \App\Models\Order::where('status',$this->order_filter)->latest()->get();
+                $this->orders = Order::where('status',$this->order_filter)->latest()->get();
             /*    if(Auth::user()->user_type==1)
                 {
                     $this->orders = \App\Models\Order::where('status',$this->order_filter)->latest()->get();
@@ -108,7 +108,7 @@ class ViewOrders extends Component
                 $this->reloadOrders();
             }
             else{
-                $this->orders = \App\Models\Order::where('status',$value)->latest()->get();
+                $this->orders = Order::where('status',$value)->latest()->get();
             /*  if(Auth::user()->user_type==1)
                 {
                     $this->orders = \App\Models\Order::where('status',$value)->latest()->get();
@@ -159,7 +159,7 @@ class ViewOrders extends Component
         /* if any balance */
         if($this->balance)
         {
-            \App\Models\Payment::create([
+                Payment::create([
                 'payment_date'  => \Carbon\Carbon::today()->toDateString(),
                 'customer_id'   => $this->customer->id ?? null,
                 'customer_name' => $this->customer->name ?? null,
@@ -253,7 +253,7 @@ class ViewOrders extends Component
         {
             if($this->order_filter || $this->order_filter != '')
             {
-                $orders = \App\Models\Order::where('order_number','like','%'.$this->search_query.'%')
+                $orders = Order::where('order_number','like','%'.$this->search_query.'%')
                 ->orwhere('customer_name','like','%'.$this->search_query.'%')
                 ->where('status',$this->order_filter)
                 ->latest()
@@ -262,7 +262,7 @@ class ViewOrders extends Component
                 return $orders;
             }
             else{
-                $orders = \App\Models\Order::where('order_number','like','%'.$this->search_query.'%')
+                $orders = Order::where('order_number','like','%'.$this->search_query.'%')
                 ->orwhere('customer_name','like','%'.$this->search_query.'%')
                 ->latest()
                 ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
@@ -273,7 +273,7 @@ class ViewOrders extends Component
         else{
             if($this->order_filter || $this->order_filter != '')
             {
-                $orders = \App\Models\Order::where('status',$this->order_filter)
+                $orders = Order::where('status',$this->order_filter)
                     ->latest()
                     ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
                 
@@ -281,7 +281,7 @@ class ViewOrders extends Component
                 return $orders;
             }
             else{
-                $orders = \App\Models\Order::latest()
+                $orders = Order::latest()
                 ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
                                          
                 return $orders;

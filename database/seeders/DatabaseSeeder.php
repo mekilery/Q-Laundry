@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\FinancialYear;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,7 +19,7 @@ class DatabaseSeeder extends Seeder
        User::create([
            'name'   => 'Admin',
            'email'  => 'admin@admin.com',
-           'password'   => \Hash::make('123456'),
+           'password'   => Hash::make('123456'),
             'user_type' => 1,
        ]);
        /* seeder call */

@@ -34,6 +34,7 @@ Route::group(['prefix' => 'admin','middleware' => ['store','installed']], functi
     Route::get('create', \App\Http\Livewire\Admin\Orders\AddOrders::class)->name('admin.create_orders');
     Route::get('view/{id}', \App\Http\Livewire\Admin\Orders\ViewSingleOrder::class)->name('admin.view_single_order');
     Route::get('print-order/{id}', \App\Http\Livewire\Admin\Orders\PrintInvoice\OrderInvoicePrint::class);
+    Route::get('edit/{order_id}', \App\Http\Livewire\Admin\Orders\EditOrder::class)->name('admin.edit_order');
     });
     Route::get('pos', \App\Http\Livewire\Admin\Orders\AddOrders::class)->name('admin.pos');
     //Order Status
@@ -50,7 +51,7 @@ Route::group(['prefix' => 'admin','middleware' => ['store','installed']], functi
     Route::get('file-tools', \App\Http\Livewire\Admin\Settings\FileTools::class)->name('admin.filetools');
     Route::get('sms', \App\Http\Livewire\Admin\Settings\SMSSettings::class)->name('admin.sms');
     Route::get('staff', \App\Http\Livewire\Admin\Staff\Staff::class)->name('admin.staff');
-    Route::get('payment-types-settings', \App\Http\Livewire\Admin\Settings\PaymentTypesSettings::class)->name('admin.payment_types_settings');
+    Route::get('payment-types-settings', PaymentTypesSettings::class)->name('admin.payment_types_settings');
     });
     /* reports section */
     Route::group(['prefix' => 'reports/','middleware' => 'admin'], function () {

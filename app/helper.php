@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use Twilio\Rest\Client;
 
+/*
 function getExpenseCategoryType($type)
 {
     if(session()->has('selected_language'))
@@ -35,18 +36,27 @@ function getExpenseCategoryType($type)
             return 'Asset';
         case 2:
             return 'Liability';
-        default:
+        default:1
             return '';
     }
 }
+ */
+
+ /* 
 /* get payment mode */
 function getpaymentMode($type) { 
     // Check if payment types are cached 
     $paymentTypes = Cache::remember('payment_types', 60, function () { 
         return PaymentType::all()->keyBy('id'); 
-    }); // Return the payment type name if found, otherwise return an empty string return 
-    $paymentTypes->has($type) ? $paymentTypes->get($type)->name : '';
- }
+    }); 
+
+    // Return the payment type name if found, otherwise return an empty string 
+    return $paymentTypes->has($type) ? $paymentTypes->get($type)->name : '';
+}
+
+
+ 
+
 /* get financial year */
 function getFinancialYearId() {
     $settings = new App\Models\MasterSettings();

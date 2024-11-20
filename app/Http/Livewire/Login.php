@@ -5,11 +5,12 @@ namespace App\Http\Livewire;
 use App\Models\MasterSettings;
 use App\Models\User;
 use Livewire\Component;
-use Auth;
+use illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Str;
+
 
 class Login extends Component
 {

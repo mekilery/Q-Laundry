@@ -33,4 +33,8 @@ class Order extends Model
       {
           return $this->belongsTo(\App\Models\User::class, 'created_by', 'id');
       }
+      public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 }
