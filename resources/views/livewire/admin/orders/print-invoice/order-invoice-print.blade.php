@@ -789,7 +789,7 @@
                         <div class="my-5">
                         
                             @php
-                                require_once base_path('vendor/phpqrcode/qrlib.php');
+                                require_once base_path('phpqrcode/qrlib.php');
                                 $balanceAmount = number_format($balanceAmount, 3);
                                 $iban_no = DB::table('master_settings')->where('master_title', 'iban_number')->value('master_value');
                                 $qrData = json_encode(["iban" => $iban_number, "amount" => $balanceAmount] );
