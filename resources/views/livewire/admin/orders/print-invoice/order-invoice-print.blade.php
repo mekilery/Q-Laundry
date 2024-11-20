@@ -790,15 +790,19 @@
                         
                             @php
                                 require_once base_path('vendor/phpqrcode/qrlib.php');
-
                                 $balanceAmount = number_format($balanceAmount, 3);
                                 $iban_no = DB::table('master_settings')->where('master_title', 'iban_number')->value('master_value');
-                                $qrData = json_encode(["iban" => $iban_no, "amount" => $balanceAmount] );
+                                $qrData = json_encode(["iban" => $iban_number, "amount" => $balanceAmount] );
                                 $size = 4;
                                 QRcode::png($qrData, 'qrcode.png', QR_ECLEVEL_L, $size, 1);
                                 $timestamp = time(); // Generate a unique timestamp
                                 echo '<img src="/public/qrcode.png?' . $timestamp . '" style="width: 60%; height: auto;">';;                          
                             @endphp
+                         </div>
+                            
+                            
+                            
+
                          </div>
                         <div class="invoice_address">
                             <div class="text-center">

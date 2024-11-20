@@ -1,20 +1,14 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateCustomersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id();
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('phone');
@@ -25,22 +19,11 @@ class CreateCustomersTable extends Migration
             $table->timestamps();
         });
 
-        // Add a trigger to format the ID to 4 digits 
-        DB::unprepared(' CREATE TRIGGER format_customer_id 
-        BEFORE INSERT ON customers FOR EACH ROW BEGIN IF NEW.id < 1000 THEN SET NEW.id = LPAD(NEW.id, 4, "0"); 
-        END IF; 
-        END ');
+        DB::statement('ALTER TABLE customers ADD id INT(4) UNSIGNED ZEROFILL PRIMARY KEY AUTO_INCREMENT');
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    
-     public function down() { 
-        // Drop the trigger 
-        DB::unprepared('DROP TRIGGER IF EXISTS format_customer_id'); 
-        Schema::dropIfExists('customers'); 
+    public function down()
+    {
+        Schema::dropIfExists('customers');
     }
 }

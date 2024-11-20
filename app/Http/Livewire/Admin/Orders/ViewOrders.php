@@ -54,7 +54,9 @@ class ViewOrders extends Component
                 $this->orders = \App\Models\Order::where('status',$this->order_filter)
                                             ->where(function($q) use ($value) {
                                                 $q->where('order_number','like','%'.$value.'%')
-                                                ->orwhere('customer_name','like','%'.$value.'%');
+                                                ->orwhere('customer_name','like','%'.$value.'%')
+                                                ->orwhere('deleted_at'=='null');
+
                                             })
                                             ->latest()
                                             ->get();
@@ -185,10 +187,10 @@ class ViewOrders extends Component
     }
     public function loadOrders()
     {
-        $this->orders = Order::whereNull('deleted_at')->get();
+        /*$this->orders = Order::whereNull('deleted_at')->get();
         if ($this->hasMorePages !== null  && ! $this->hasMorePages) {
             return;
-        }
+        }*/
         $myorder = $this->filterdata();
         $this->orders->push(...$myorder->items());
         if ($this->hasMorePages = $myorder->hasMorePages()) {
@@ -211,15 +213,39 @@ class ViewOrders extends Component
         }
         $this->currentCursor = $orders->cursor();
     }
-    public function delete($id) 
-    { $order = Order::find($id); if ($order) { $order->delete();
-         // Perform a soft delete 
-         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Order was marked as deleted!']); 
-         $this->loadOrders(); 
-         // Refresh the orders collection excluding soft-deleted records 
-         } 
-         else { 
-            $this->dispatchBrowserEvent('alert', [ 'type' => 'success', 'message' => "Order {$order->order_number} for customer {$order->customer_name} Has been deleted!" ]);}
+    public function delete($id)
+    {
+        $order = Order::withTrashed()->find($id);
+        
+        if ($order) {
+            if ($order->trashed()) {
+                $this->dispatchBrowserEvent('alert', [
+                    'type' => 'info',
+                    'message' => "Order {$order->order_number} is already deleted!"
+                ]);
+            } else {
+                $order->delete(); // Perform a soft delete
+                $this->dispatchBrowserEvent('alert', [
+                    'type' => 'success',
+                    'message' => "Order {$order->order_number} for customer {$order->customer_name} has been marked as deleted!"
+                ]);
+                $this->loadOrders(); // Refresh the orders collection excluding soft-deleted records
+            }
+        } else {
+            $this->dispatchBrowserEvent('alert', [
+                'type' => 'error',
+                'message' => "Order not found!"
+            ]);
+        }
+    }
+    public function confirmDelete($id)
+    {
+        $this->dispatchBrowserEvent('swal:confirm', [
+            'type' => 'warning',
+            'title' => 'Are you sure?',
+            'text' => 'You won\'t be able to revert this!',
+            'id' => $id,
+        ]);
     }
     public function filterdata()
     {
@@ -232,20 +258,7 @@ class ViewOrders extends Component
                 ->where('status',$this->order_filter)
                 ->latest()
                 ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-            /*  if(Auth::user()->user_type==1)
-                {
-                $orders = \App\Models\Order::where('order_number','like','%'.$this->search_query.'%')
-                ->orwhere('customer_name','like','%'.$this->search_query.'%')
-                ->where('status',$this->order_filter)
-                ->latest()
-                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                } else {
-                    $orders = \App\Models\Order::where('created_by',Auth::user()->id)->where('order_number','like','%'.$this->search_query.'%')
-                    ->orwhere('customer_name','like','%'.$this->search_query.'%')
-                    ->where('status',$this->order_filter)
-                    ->latest()
-                    ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                }*/
+            
                 return $orders;
             }
             else{
@@ -254,18 +267,6 @@ class ViewOrders extends Component
                 ->latest()
                 ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
                 
-                /*if(Auth::user()->user_type==1)
-                {
-                $orders = \App\Models\Order::where('order_number','like','%'.$this->search_query.'%')
-                ->orwhere('customer_name','like','%'.$this->search_query.'%')
-                ->latest()
-                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                } else {
-                    $orders = \App\Models\Order::where('created_by',Auth::user()->id)->where('order_number','like','%'.$this->search_query.'%')
-                    ->orwhere('customer_name','like','%'.$this->search_query.'%')
-                    ->latest()
-                    ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                }*/
                 return $orders;
             }
         }
@@ -277,34 +278,12 @@ class ViewOrders extends Component
                     ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
                 
                 
-
-                /*if(Auth::user()->user_type==1)
-                {
-                    $orders = \App\Models\Order::where('status',$this->order_filter)
-                    ->latest()
-                    ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                } else {
-                    $orders = \App\Models\Order::where('created_by',Auth::user()->id)->where('status',$this->order_filter)
-                    ->latest()
-                    ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                }*/
-
                 return $orders;
             }
             else{
                 $orders = \App\Models\Order::latest()
                 ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                
-                /*if(Auth::user()->user_type==1)
-                {
-                    $orders = \App\Models\Order::latest()
-                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                } else {
-                    $orders = \App\Models\Order::where('created_by',Auth::user()->id)->latest()
-                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                }*/
-
-                
+                                         
                 return $orders;
             }
         }

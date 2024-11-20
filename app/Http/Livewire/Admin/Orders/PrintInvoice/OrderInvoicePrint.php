@@ -8,10 +8,12 @@ use App\Models\OrderAddonDetail;
 use App\Models\OrderDetails;
 use App\Models\Payment;
 use App\Models\Translation;
+use vendor\Endroid\QrCode\Builder\Builder;
+use Illuminate\Support\Facades\DB;
 
 class OrderInvoicePrint extends Component
 {
-    public $order,$orderdetails,$orderaddons,$balance,$total,$customer,$payments,$sitename,$address,$phone,$paid_amount,$payment_type,$zipcode,$tax_number,$store_email,$from_date,$to_date;
+    public $order,$orderdetails,$orderaddons,$balance,$total,$customer,$payments,$sitename,$address,$phone,$paid_amount,$payment_type,$zipcode,$tax_number,$store_email,$from_date,$to_date, $iban_number;
     /* render the page */
     public function render()
     {
@@ -71,6 +73,13 @@ class OrderInvoicePrint extends Component
             $store_email = (($site['store_email']) && ($site['store_email'] !=""))? $site['store_email'] : 'store@store.com';
             $this->store_email = $store_email;
         }
+        /* if site has Iban Number */
+        if(isset($site['iban_number']))
+        {
+            $iban_number = (($site['iban_number']) && ($site['iban_number'] !=""))? $site['iban_number'] : 'iban_number';
+            $this->iban_number = $iban_number;
+        }
+        
         $this->balance = $this->order->total -  Payment::where('order_id',$this->order->id)->sum('received_amount');
         $this->paid_amount = $this->balance;
         if(session()->has('selected_language'))
