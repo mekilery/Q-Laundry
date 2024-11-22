@@ -1,21 +1,22 @@
 <?php
 namespace App\Http\Livewire\Admin\Orders;
-use App\Http\Livewire\Admin\Customers\Customers;
+use Carbon\Carbon;
 use App\Models\Addon;
-use App\Models\Customer;
 use App\Models\Order;
-use App\Models\OrderDetails;
+use App\Models\Payment;
 use App\Models\Service;
-use App\Models\ServiceDetail;
+use Livewire\Component;
+use App\Models\Customer;
+use App\Models\PaymentType;
 use App\Models\ServiceType;
 use App\Models\Translation;
-use App\Models\PaymentType;
-use Carbon\Carbon;
+use App\Models\OrderDetails;
+use App\Models\ServiceDetail;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Component;
+use App\Http\Livewire\Admin\Customers\Customers;
 class EditOrder extends Component
 {
-    public $services,$search_query,$order_id,$inputs = [],$selservices = [],$customer,$date,$delivery_date,$discount,$paid_amount,$payment_type;
+    public $services,$search_query,$order,$order_number,$inputs = [],$selservices = [],$customer,$order_date, $date,$delivery_date,$discount,$paid_amount,$payment_type;
     public $payment_notes,$service_types,$service,$inputi,$prices = [],$quantity = [],$selected_type,$addons,$selected_addons = [],$colors = [];
     public $customer_name,$customer_phone,$email,$tax_no,$address,$selected_customer,$customers,$customer_query,$is_active = 1;
     public $total,$sub_total,$addon_total,$tax_percent,$tax,$balance,$flag = 0,$lang;
@@ -27,18 +28,30 @@ class EditOrder extends Component
 
      /* process before render */
 
-     public function mount($order_id)
+     public function mount($id)
      {
-        $this->order = Order::with('customer')->find($order_id);
-         $this->loadOrderData($order_id);
-         $this->services = Service::where('is_active', 1)->latest()->get();
-         $this->date = Carbon::today()->toDateString();
-         $this->service_types = collect();
-         $this->addons = Addon::where('is_active', 1)->latest()->get();
-         $this->delivery_date = Carbon::today()->toDateString();
-         $this->tax_percent = getTaxPercentage();
-         $this->paymentTypes = PaymentType::where('is_active', 1)->get();
-         if (session()->has('selected_language')) {
+        if(Auth::user()->user_type==1)
+            {  
+                $order = Order::where('id',$id)->first();
+                $this->order = $order;
+                $this->order_id = $order->order_id;
+                $this->order_number = $order->order_number;
+                $this->date = Carbon::parse($order->order_date)->format('d-m-Y');
+                $this->customer=$order->customer_id;
+                $this->customer_name = $order->customer->name?? 'Walk-in Customer';
+                $this->orderdetails = OrderDetails::where('order_id',$this->order->id)->get();
+                $this->payments = Payment::where('order_id',$this->order->id)->get();
+                $this->services = Service::where('is_active', 1)->latest()->get();
+                $this->service_types = collect();
+                $this->addons = Addon::where('is_active', 1)->latest()->get();
+                $this->delivery_date = Carbon::today()->toDateString();
+                $this->tax_percent = getTaxPercentage();
+                $this->paymentTypes = PaymentType::where('is_active', 1)->get();
+            } 
+            else
+            { abort(404);}
+            
+        if (session()->has('selected_language')) {
              $this->lang = Translation::where('id', session()->get('selected_language'))->first();
          } else {
              $this->lang = Translation::where('default', 1)->first();
@@ -50,7 +63,6 @@ class EditOrder extends Component
          // Retrieve the order from the database
          $order = Order::with('customer')->find($orderId);
      
-         if ($order) {
              // Assign order details to the properties
              $this->order_number = $order->order_number;
              $this->customer_id = $order->customer_id;
@@ -59,7 +71,7 @@ class EditOrder extends Component
              $this->email = $order->email;
              $this->tax_no = $order->tax_no;
              $this->address = $order->address;
-             $this->date = $order->date;
+             $this->date = $order->order_date;
              $this->delivery_date = $order->delivery_date;
              $this->discount = $order->discount;
              $this->paid_amount = $order->paid_amount;
@@ -72,11 +84,7 @@ class EditOrder extends Component
              $this->tax = $order->tax;
              $this->balance = $order->balance;
              // Load other necessary fields
-         } else {
-             // Handle the case where the order is not found
-             return response()->json(['message' => 'Order not found'], 404);
-         }
-     
+         
          // Return the order details (for example, as a JSON response)
          return response()->json($order);
      }
@@ -167,33 +175,33 @@ public function selectService($id)
     }
     $this->calculateTotal();
 }
+
 /* select services*/
-public function addItem()
-{
-
-    if($this->service)
+    public function addItem()
     {
-        if($this->selected_type != '')
+        if($this->service)
         {
-        $this->add($this->inputi);
-        $this->selservices[$this->inputi]['service'] = $this->service->id;
-        $this->selservices[$this->inputi]['service_type']  = $this->selected_type;
-        $servicedetail = ServiceDetail::where('service_id',$this->service->id)->where('service_type_id',$this->selected_type)->first();
-         /* if service details is not empty */
-        if($servicedetail)
-        {
-            $this->prices[$this->inputi] = $servicedetail->service_price;
-        }
-        $this->emit('closemodal');
-        $this->calculateTotal();
-        }
-        else{
-            $this->addError('service_error','Select a service type');
-            return 0;
-        }
+            if($this->selected_type != '')
+            {
+            $this->add($this->inputi);
+            $this->selservices[$this->inputi]['service'] = $this->service->id;
+            $this->selservices[$this->inputi]['service_type']  = $this->selected_type;
+            $servicedetail = ServiceDetail::where('service_id',$this->service->id)->where('service_type_id',$this->selected_type)->first();
+             /* if service details is not empty */
+            if($servicedetail)
+            {
+                $this->prices[$this->inputi] = $servicedetail->service_price;
+            }
+            $this->emit('closemodal');
+            $this->calculateTotal();
+            }
+            else{
+                $this->addError('service_error','Select a service type');
+                return 0;
+            }
 
+        }
     }
-}
 /* add the item to array */
 public function add($i)
 {
@@ -378,7 +386,7 @@ public function save()
         }
         if($this->paid_amount)
         {
-            \App\Models\Payment::create([
+            Payment::create([
                 'payment_date'  => $this->date,
                 'customer_id'   => $this->selected_customer->id ?? null,
                 'customer_name' => $this->selected_customer->name ?? null,
@@ -392,22 +400,6 @@ public function save()
         }
         $this->flag = 1;
 
-/*$this->selected_customer
-
-            {
-                $message = sendOrderCreateSMS($order->id,$this->selected_customer->id);
-                if($message)
-                {
-                    $this->dispatchBrowserEvent(
-                        'alert', ['type' => 'error',  'message' => $message,'title'=>'SMS Error']);
-                }
-            }
-            $this->dispatchBrowserEvent(
-                'alert', ['type' => 'success',  'message' => $order->order_number.' Was Successfully Created!']);
-        }
-         $this->emit('printPage',$order->id);
-    }
-    */
 
     }
 }

@@ -21,6 +21,8 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
                 <div class="pos-card-wrapper-scroll-y my-custom-scrollbar-pos-card  mb-3">
                     <div class="row align-items-center g-3 px-4 ">
                         @foreach ($services as $item)
@@ -411,6 +413,7 @@
             </div>
         </div>
     </div>
+</div>
     <script>
          "use strict";
         Livewire.on('printPage', orderId => {
@@ -422,4 +425,3 @@
             window.onfocus = function () { setTimeout(function () { window.location.reload(); }, 100); }
         })
     </script>
-</div>

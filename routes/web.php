@@ -34,7 +34,7 @@ Route::group(['prefix' => 'admin','middleware' => ['store','installed']], functi
     Route::get('create', \App\Http\Livewire\Admin\Orders\AddOrders::class)->name('admin.create_orders');
     Route::get('view/{id}', \App\Http\Livewire\Admin\Orders\ViewSingleOrder::class)->name('admin.view_single_order');
     Route::get('print-order/{id}', \App\Http\Livewire\Admin\Orders\PrintInvoice\OrderInvoicePrint::class);
-    Route::get('edit/{order_id}', \App\Http\Livewire\Admin\Orders\EditOrder::class)->name('admin.edit_order');
+    Route::get('edit/{id}', \App\Http\Livewire\Admin\Orders\EditOrder::class)->name('admin.edit_order');
     });
     Route::get('pos', \App\Http\Livewire\Admin\Orders\AddOrders::class)->name('admin.pos');
     //Order Status

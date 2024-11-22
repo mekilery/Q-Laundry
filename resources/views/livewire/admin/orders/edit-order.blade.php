@@ -1,45 +1,49 @@
-<div class="row align-items-center justify-content-between mb-4">
-    <div class="col">
+<div>
+    <div class="row align-items-center justify-content-between mb-4">
+    
+        <div class="col">
             <h5 class="fw-500 text-white">{{ $lang->data['Edit_order'] ?? 'Edit Order' }}</h5>
+        </div>
+        <div class="col-auto">
+            <a href="{{ route('admin.view_orders') }}" class="btn btn-icon btn-3 btn-white text-primary mb-0">
+                <i class="fa fa-arrow-left me-2"></i> {{ $lang->data['back'] ?? 'Back' }}
+            </a>
+        </div>
     </div>
-    <div class="col-auto">
-        <a href="{{ route('admin.view_orders') }}" class="btn btn-icon btn-3 btn-white text-primary mb-0">
-             <i class="fa fa-arrow-left me-2"></i> {{ $lang->data['back'] ?? 'Back' }}
-        </a>
-    </div>
-    <div class="row match-height">
-        <div class="col-lg-7 col-12">
-            <div class="card mb-4">
-                <div class="card-header p-4">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <input type="text" class="form-control"
-                                placeholder="{{ $lang->data['search_here'] ?? 'Search Here' }}"
-                                wire:model="search_query">
+        <div class="row match-height">
+            <div class="col-lg-7 col-12">
+                <div class="card mb-4">
+                    <div class="card-header p-4">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="text" class="form-control"
+                                    placeholder="{{ $lang->data['search_here'] ?? 'Search Here' }}"
+                                    wire:model="search_query">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pos-card-wrapper-scroll-y my-custom-scrollbar-pos-card  mb-3">
+                        <div class="row align-items-center g-3 px-4 ">
+                            @foreach ($services as $item)
+                                <div class="col-lg-3 col-6 text-center">
+                                    <div class="border-dashed border-1 border-secondary border-radius-md py-1">
+                                        <a type="button" data-bs-toggle="modal" data-bs-target="#servicetype"
+                                            wire:click="selectService({{ $item->id }})">
+                                            <div class="avatar avatar-xl mb-3">
+                                                <img src="{{ asset('assets/img/service-icons/' . $item->icon) }}"
+                                                    class="rounded p-2">
+                                            </div>
+                                            <p class="text-xs font-weight-bold">{{ $item->service_name }}</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 </div>
-                <div class="pos-card-wrapper-scroll-y my-custom-scrollbar-pos-card  mb-3">
-                    <div class="row align-items-center g-3 px-4 ">
-                        @foreach ($services as $item)
-                            <div class="col-lg-3 col-6 text-center">
-                                <div class="border-dashed border-1 border-secondary border-radius-md py-1">
-                                    <a type="button" data-bs-toggle="modal" data-bs-target="#servicetype"
-                                        wire:click="selectService({{ $item->id }})">
-                                        <div class="avatar avatar-xl mb-3">
-                                            <img src="{{ asset('assets/img/service-icons/' . $item->icon) }}"
-                                                class="rounded p-2">
-                                        </div>
-                                        <p class="text-xs font-weight-bold">{{ $item->service_name }}</p>
-                                    </a>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
             </div>
-        </div>
-        <div class="col-lg-5 col-12">
+            
+            <div class="col-lg-5 col-12">
             <div class="card mb-4">
                 <div class="card-header p-4">
                     <div class="row">
@@ -65,7 +69,7 @@
                             <input type="text" required class="form-control" readonly value="{{ $order_number }}">
                         </div>
                         <div class="col-md-6">
-                            <input type="date" class="form-control" wire:model="date">
+                            <input type="text"  class="form-control" readonly wire:model="date";>
                         </div>
                     </div>
                 </div>
@@ -85,6 +89,51 @@
                                 </tr>
                             </thead>
                         </table>
+                    </div>        
+                    <div class="order-list-wrapper-scroll-y my-custom-scrollbar-order-list">
+                        <div class="row align-items-center g-3 px-4 ">
+                            @foreach ($orderdetails as $item)
+                                    @php
+                                        $service = \App\Models\Service::where('id', $item->service_id)->first();
+                                    @endphp
+                                    <tr>
+                                        <td>
+                                            <p class="text-sm px-3 mb-0">{{ $loop->index + 1 }}</p>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex px-3 py-1">
+                                                <div>
+                                                    <img src="{{ asset('assets/img/service-icons/' . $service->icon) }}"
+                                                        class="avatar avatar-sm me-3">
+                                                </div>
+                                                <div class="d-flex flex-column justify-content-center">
+                                                    <h6 class="mb-1 text-sm">{{ $service->service_name }}</h6>
+                                                    <span
+                                                        class="text-xs fw-600 text-primary">[{{ $item->service_name }}]</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-4">
+                                            @if($item->color_code!="")
+                                                <button class="btn" style="background-color: {{$item->color_code}}">
+                                                </button>
+                                            @endif
+                                        </td>
+                                        <td class="">
+                                            <p class="text-sm px-3 mb-0">{{ getCurrency() }}
+                                                {{ number_format($item->service_price, 3) }}</p>
+                                        </td>
+                                        <td class="align-middle text-center">
+                                            <p class="text-sm px-3 mb-0">{{ $item->service_quantity }}</p>
+                                        </td>
+                                        <td class="">
+                                            <p class="text-sm px-3 mb-0">{{ getCurrency() }}
+                                                {{ number_format($item->service_detail_total, 3) }}</p>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        
                     </div>
                     <div class="order-list-wrapper-scroll-y my-custom-scrollbar-order-list">
                         <div class="row align-items-center g-3 px-4 ">
@@ -146,10 +195,12 @@
                             data-bs-target="#payment">{{ $lang->data['Update_order'] ?? 'Update Order' }}</button>
                     </div>
                 </div>
+            
             </div>
+            
+
         </div>
-    </div>
-</div>
+    
     <div class="modal fade " id="servicetype" tabindex="-1" role="dialog" aria-labelledby="servicetype"
         aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -421,3 +472,4 @@
            window.onfocus = function () { setTimeout(function () { window.location.reload(); }, 100); }
        })
    </script>
+<div>
