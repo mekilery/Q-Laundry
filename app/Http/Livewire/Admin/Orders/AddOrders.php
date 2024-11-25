@@ -104,32 +104,27 @@ class AddOrders extends Component
         $this->calculateTotal();
     }
     /* select services*/
-    public function addItem()
-    {
-
-        if($this->service)
-        {
-            if($this->selected_type != '')
-            {
-            $this->add($this->inputi);
-            $this->selservices[$this->inputi]['service'] = $this->service->id;
-            $this->selservices[$this->inputi]['service_type']  = $this->selected_type;
-            $servicedetail = ServiceDetail::where('service_id',$this->service->id)->where('service_type_id',$this->selected_type)->first();
-             /* if service details is not empty */
-            if($servicedetail)
-            {
-                $this->prices[$this->inputi] = $servicedetail->service_price;
-            }
-            $this->emit('closemodal');
-            $this->calculateTotal();
-            }
-            else{
-                $this->addError('service_error','Select a service type');
-                return 0;
-            }
-
-        }
-    }
+    public function addItem() {
+         if ($this->service) 
+         { if ($this->selected_type != '')
+             { 
+                $this->add($this->inputi); 
+                $this->selservices[$this->inputi]
+                ['service'] = $this->service->id; 
+                $this->selservices[$this->inputi]
+                ['service_type'] = $this->selected_type; 
+                $servicedetail = ServiceDetail::where('service_id',
+                 $this->service->id) ->where('service_type_id', 
+                 $this->selected_type) ->first(); /* if service details is not empty */ 
+                 if ($servicedetail) 
+                 { $this->prices[$this->inputi] = number_format($servicedetail->service_price, 3, '.', ''); } 
+                 $this->emit('closemodal'); 
+                 $this->calculateTotal(); 
+                } 
+                 else 
+                 { $this->addError('service_error', 'Select a service type'); 
+                    return 0; } }
+                 }
     /* add the item to array */
     public function add($i)
     {
@@ -307,7 +302,7 @@ class AddOrders extends Component
                     'service_name'  => $service_type->service_type_name,
                     'service_quantity'  => $this->quantity[$key],
                     'service_detail_total'  => $this->prices[$key]*$this->quantity[$key],
-                    'service_price' => $this->prices[$key],
+                   'service_price' => number_format((float)$this->prices[$key], 3, '.', ''),
                     'color_code' => $this->colors[$key],
                 ]);
             }
