@@ -72,6 +72,7 @@ class EditOrder extends Component
     public function increase($key)
     {
         /* if quantity of key is exist */
+        $quantity[$key] = $this->orderDetails->service_quantity;
         if(isset($this->quantity[$key] ))
         {
             $this->quantity[$key]++;

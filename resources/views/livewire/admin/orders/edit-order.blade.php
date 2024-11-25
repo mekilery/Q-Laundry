@@ -112,14 +112,14 @@
                                             <input class="form-control" type="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" wire:model="orderDetails.{{ $key }}.color_code" wire:change="changeColor({{ $key }})">
                                             </div> 
                                             <div class="col-3"> 
-                                            <input type="number" class="form-control form-control-sm text-center" {{number_format ($item->service_price, 3)}}> 
+                                            <input type="number" class="form-control form-control-sm text-center" (wire:model="prices.{{ $key }}" ? value="{{number_format ($item->service_price, 3)}}")> 
                                             </div> 
                                             <div class="col-3"> 
                                             <div class="input-group align-items-center"> 
                                                 <div class="badge bg-secondary text-xxs text-center p-66" type="button" wire:click="decrease({{ $key }})"><i class="fa fa-minus"></i>
                                                 </div> 
-                                                <input type="number" class="form-control form-control-sm text-center" wire:model="orderDetails.{{ $key }}.service_quantity"> 
-                                            <div class="badge bg-primary text-xxs text-center p-66" type="button" wire:click="increase({{ $key }})"><i class="fa fa-plus"></i>
+                                                <input type="number" class="form-control form-control-sm text-center" wire:click="quantity.{{ $key }}"> 
+                                            <div class="badge bg-primary text-xxs text-center p-66" type="button" wire:click="increase{{ $key }}"><i class="fa fa-plus"></i>
                                             </div> 
                                             </div> 
                                         </div> 
