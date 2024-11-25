@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Livewire\Admin\Customers\Customers;
 class EditOrder extends Component
 {
-    public $services,$search_query,$order,$order_number,$inputs = [],$selservices = [],$customer,$order_date, $date,$delivery_date,$discount,$paid_amount,$payment_type;
-    public $payment_notes,$service_types,$service,$inputi,$prices = [],$quantity = [],$selected_type,$addons,$selected_addons = [],$colors = [];
+    public $services,$search_query,$order,$order_number,$inputs = [],$selservices = [],$customer,$order_date, $orderDetails,$date,$delivery_date,$discount,$paid_amount,$payment_type;
+    public $payment_notes,$service_type,$service,$inputi,$prices = [],$quantity = [],$selected_type,$addons,$selected_addons = [],$colors = [];
     public $customer_name,$customer_phone,$email,$tax_no,$address,$selected_customer,$customers,$customer_query,$is_active = 1;
     public $total,$sub_total,$addon_total,$tax_percent,$tax,$balance,$flag = 0,$lang;
     /* render the page */
@@ -26,10 +26,19 @@ class EditOrder extends Component
         return view('livewire.admin.orders.edit-order');
     }
 
+    public $newService = [ 
+        'service_id' => '', 
+        'service_type' => '',
+        'service_type_id' => '',
+        'service_price' => '',
+        'service_quantity' => '',
+        'color_code' => ''
+        ];
+
      /* process before render */
 
-     public function mount($id)
-     {
+    public function mount($id)
+    {
         if(Auth::user()->user_type==1)
             {  
                 $order = Order::where('id',$id)->first();
@@ -39,7 +48,7 @@ class EditOrder extends Component
                 $this->date = Carbon::parse($order->order_date)->format('d-m-Y');
                 $this->customer=$order->customer_id;
                 $this->customer_name = $order->customer->name?? 'Walk-in Customer';
-                $this->orderdetails = OrderDetails::where('order_id',$this->order->id)->get();
+                $this->orderDetails = OrderDetails::where('order_id',$this->order->id)->get();
                 $this->payments = Payment::where('order_id',$this->order->id)->get();
                 $this->services = Service::where('is_active', 1)->latest()->get();
                 $this->service_types = collect();
@@ -53,10 +62,43 @@ class EditOrder extends Component
             
         if (session()->has('selected_language')) {
              $this->lang = Translation::where('id', session()->get('selected_language'))->first();
-         } else {
+        } else {
              $this->lang = Translation::where('default', 1)->first();
-         }
-     }
+        }
+        }
+
+
+
+    public function increase($key)
+    {
+        /* if quantity of key is exist */
+        if(isset($this->quantity[$key] ))
+        {
+            $this->quantity[$key]++;
+            $this->calculateTotal();
+        }
+    }
+    /* decrease the count */
+    public function decrease($key)
+    {
+        /* is quantity of key is exist */
+        if(isset($this->quantity[$key] ))
+        {
+            if($this->quantity[$key] > 1)
+            {
+                /* if quantity of key is >1 */
+                $this->quantity[$key]--;
+            }
+            else{
+                /* unset the details if quantity of key is 1 */
+                unset($this->quantity[$key]);
+                unset($this->prices[$key]);
+                unset($this->service_type[$key]);
+                unset($this->selservices[$key]);
+            }
+            $this->calculateTotal();
+        }
+    }
      
      public function loadOrderData($orderId)
      {
@@ -88,7 +130,19 @@ class EditOrder extends Component
          // Return the order details (for example, as a JSON response)
          return response()->json($order);
      }
-     
+    public function addService() 
+    { 
+        $this->orderDetails->push((object) 
+        $this->newService); 
+        $this->newService = 
+        [ 
+            'service_id' => '', 
+            'service_type_id' => '', 
+            'service_price' => '', 
+            'service_quantity' => '', 
+            'color_code' => '' 
+        ]; 
+    }
 
 
     /* 
@@ -151,7 +205,7 @@ public function selectService($id)
 {
     $this->selected_type = '';
     $this->service = Service::where('id',$id)->first();
-    $this->service_types = collect();
+    $this->service_type = collect();
     /* if service is not empty */
     if($this->service)
     {
@@ -159,14 +213,14 @@ public function selectService($id)
         foreach($servicedetails as $row)
         {
             $servicetype = ServiceType::where('id',$row->service_type_id)->first();
-            $this->service_types->push($servicetype);
+            $this->service_type->push($servicetype);
         }
     }
-    if($this->service_types)
+    if($this->service_type)
     {
-        if(count($this->service_types ) > 0) 
+        if(count($this->service_type ) > 0) 
         {
-            $first = $this->service_types->first();
+            $first = $this->service_type->first();
             if($first)
             {
                 $this->selected_type = $first->id;
@@ -190,7 +244,7 @@ public function selectService($id)
              /* if service details is not empty */
             if($servicedetail)
             {
-                $this->prices[$this->inputi] = $servicedetail->service_price;
+                $this->prices[$this->inputi] = number_format($servicedetail->service_price, 3, '.', '');;
             }
             $this->emit('closemodal');
             $this->calculateTotal();
@@ -202,7 +256,7 @@ public function selectService($id)
 
         }
     }
-/* add the item to array */
+/* add the item to array 
 public function add($i)
 {
     $this->inputi = $i + 1;
@@ -212,29 +266,29 @@ public function add($i)
     $this->quantity[$this->inputi]  = 1;
     $this->colors[$this->inputi]  = '';
 }
-/* increase the count */
+/* increase the count 
 public function increase($key)
 {
-    /* if quantity of key is exist */
+    //if quantity of key is exist 
     if(isset($this->quantity[$key] ))
     {
         $this->quantity[$key]++;
         $this->calculateTotal();
     }
 }
-/* decrease the count */
+// decrease the count 
 public function decrease($key)
 {
-    /* is quantity of key is exist */
+    // is quantity of key is exist 
     if(isset($this->quantity[$key] ))
     {
         if($this->quantity[$key] > 1)
         {
-            /* if quantity of key is >1 */
+            // if quantity of key is >1 
             $this->quantity[$key]--;
         }
         else{
-            /* unset the details if quantity of key is 1 */
+            // unset the details if quantity of key is 1 
             unset($this->quantity[$key]);
             unset($this->prices[$key]);
             unset($this->service_types[$key]);
@@ -243,6 +297,7 @@ public function decrease($key)
         $this->calculateTotal();
     }
 }
+*/
 //* create customer */
 public function createCustomer()
 {   /* validation */
@@ -330,7 +385,7 @@ public function save()
         $this->addError('paid_amount','The customer must be registered to use ledger.');
         return 0;
     }
-    $this->generateOrderID();
+    $this->order_id();
     if($this->flag == 0)
     {
         $order = Order::create([
@@ -355,7 +410,7 @@ public function save()
         foreach($this->selservices as $key => $value)
         {
             $service = Service::where('id',$value['service'])->first();
-            $service_type = ServiceType::where('id',$value['service_type'])->first();
+            $service_types = ServiceType::where('id',$value['service_type'])->first();
             $service_type_detail = ServiceDetail::where('service_type_id',$service_type->id)->first();
             $amount += $this->prices[$key];
             OrderDetails::create([

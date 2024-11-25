@@ -49,33 +49,33 @@
                                     <th class="text-uppercase text-secondary text-xs  opacity-7">
                                         {{ $lang->data['customer'] ?? 'Customer' }}</th>
                                     <th class="text-uppercase text-secondary text-xs  opacity-7">
-                                        {{ $lang->data['order_amount'] ?? 'Order Amount' }}</th>
+                                        {{ $lang->data['order_amount'] ?? 'Amount' }}</th>
                                     <th class="text-center text-uppercase text-secondary text-xs opacity-7">
                                         {{ $lang->data['status'] ?? 'Status' }}</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7">
                                         {{ $lang->data['payment'] ?? 'Payment' }}</th>
                                         <th class="text-uppercase text-secondary text-xs opacity-7 ps-2">
                                             {{ $lang->data['created_by'] ?? 'Created By' }}</th>
-                                    <th class="text-secondary opacity-7"></th>
+                                    <th class="text-secondary opacity-7">Actions</th>
                                 </tr>
                             </thead>
                             <tbody wire:poll="refresh">
                                 @foreach ($orders as $item)
                                 
                                     <tr>
-                                        <td>
-                                            <p class="text-sm px-3 mb-0">
+                                        <td >
+                                            <p class="d-flex justify-content-between text-sm px-3 mb-0">
                                                 <span
-                                                    class="me-2">{{ $lang->data['order_id'] ?? 'Order ID' }}:</span>
+                                                    class="me-2 ">{{ $lang->data['order_id'] ?? 'Order ID' }}:</span>
                                                 <span class="font-weight-bold">{{ $item->order_number }}</span>
                                             </p>
-                                            <p class="text-sm px-3 mb-0">
+                                            <p class="d-flex justify-content-between text-sm px-3 mb-0">
                                                 <span
                                                     class="me-2">{{ $lang->data['order_date'] ?? 'Order Date' }}:</span>
                                                 <span
                                                     class="font-weight-bold">{{ \Carbon\Carbon::parse($item->order_date)->format('d/m/y') }}</span>
                                             </p>
-                                            <p class="text-sm px-3 mb-0">
+                                            <p class="d-flex justify-content-between text-sm px-3 mb-0">
                                                 <span
                                                     class="me-2">{{ $lang->data['delivery_date'] ?? 'Delivery Date' }}:</span>
                                                 <span
@@ -119,13 +119,13 @@
                                             @endphp
                                             <p class="text-sm mb-0">
                                                 <span
-                                                    class="me-2">{{ $lang->data['total_amount'] ?? 'Total Amount' }}:</span>
+                                                    class="me-2">{{ $lang->data['total_amount'] ?? 'Total' }}:</span>
                                                 <span class="font-weight-bold">{{ getCurrency() }}
                                                     {{ number_format($item->total, 3) }}</span>
                                             </p>
                                             <p class="text-sm mb-1">
                                                 <span
-                                                    class="me-2">{{ $lang->data['paid_amount'] ?? 'Paid Amount' }}:</span>
+                                                    class="me-2">{{ $lang->data['paid_amount'] ?? 'Paid' }}:</span>
 
                                                 <span class="font-weight-bold">{{ getCurrency() }}
                                                     {{ number_format($paidamount, 3) }}</span>
@@ -150,10 +150,15 @@
                                             <p class="text-sm mb-0 text-uppercase">
                                                 {{ $item->user->name ?? "" }}</p>
                                         </td>
-                                        <td>
+                                        <td >
                                             <a href="{{ route('admin.view_single_order', $item->id) }}" type="button"
                                                 class="badge badge-xs badge-primary text-xs fw-600">
                                                 {{ $lang->data['view'] ?? 'View' }}
+                                            </a>
+
+                                            <a href="{{ route('admin.edit_order', $item->id) }}" type="button"
+                                                class="badge badge-xs badge bg-warning text-dark text-xs fw-600">
+                                                {{ $lang->data['edit_order'] ?? '  Edit  ' }}
                                             </a>
                                         </td>
                                     </tr>

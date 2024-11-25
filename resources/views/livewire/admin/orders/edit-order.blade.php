@@ -90,97 +90,77 @@
                             </thead>
                         </table>
                     </div>        
-                    <div class="order-list-wrapper-scroll-y my-custom-scrollbar-order-list">
-                        <div class="row align-items-center g-3 px-4 ">
-                            @foreach ($orderdetails as $item)
-                                    @php
-                                        $service = \App\Models\Service::where('id', $item->service_id)->first();
-                                    @endphp
-                                    <tr>
-                                        <td>
-                                            <p class="text-sm px-3 mb-0">{{ $loop->index + 1 }}</p>
-                                        </td>
-                                        <td>
-                                            <div class="d-flex px-3 py-1">
-                                                <div>
-                                                    <img src="{{ asset('assets/img/service-icons/' . $service->icon) }}"
-                                                        class="avatar avatar-sm me-3">
-                                                </div>
-                                                <div class="d-flex flex-column justify-content-center">
-                                                    <h6 class="mb-1 text-sm">{{ $service->service_name }}</h6>
-                                                    <span
-                                                        class="text-xs fw-600 text-primary">[{{ $item->service_name }}]</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-4">
-                                            @if($item->color_code!="")
-                                                <button class="btn" style="background-color: {{$item->color_code}}">
-                                                </button>
-                                            @endif
-                                        </td>
-                                        <td class="">
-                                            <p class="text-sm px-3 mb-0">{{ getCurrency() }}
-                                                {{ number_format($item->service_price, 3) }}</p>
-                                        </td>
-                                        <td class="align-middle text-center">
-                                            <p class="text-sm px-3 mb-0">{{ $item->service_quantity }}</p>
-                                        </td>
-                                        <td class="">
-                                            <p class="text-sm px-3 mb-0">{{ getCurrency() }}
-                                                {{ number_format($item->service_detail_total, 3) }}</p>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        
-                    </div>
-                    <div class="order-list-wrapper-scroll-y my-custom-scrollbar-order-list">
-                        <div class="row align-items-center g-3 px-4 ">
-                            @foreach ($selservices as $key => $item)
-                                <div class="col-lg-12 col-12">
-                                    <div class="row ms-2 align-items-center">
-                                        <div class="col-4">
-                                            <h6 class="text-xs h6 mb-0">
-                                                @php
-                                                    $serviceinline = null;
-                                                    if (isset($item['service'])) {
-                                                        $serviceinline = \App\Models\Service::where('id', $item['service'])->first();
-                                                    }
-                                                    if (isset($item['service_type'])) {
-                                                        $servicetypeinline = \App\Models\ServiceType::where('id', $item['service_type'])->first();
-                                                    }
+                    <div class="order-list-wrapper-scroll-y my-custom-scrollbar-order-list"> 
+                        <div class="row align-items-center g-3 px-4">
+                             @foreach ($orderDetails as $key => $item) 
+                                <div class="col-lg-12 col-12"> 
+                                    <div class="row ms-2 align-items-center"> 
+                                        <div class="col-4"> 
+                                            <h5 class="text-xs h6 mb-0">
+                                                                                               @php
+                                                    $service = \App\Models\Service::find($item['service_id']);
+                                                    $serviceinline = $service->service_name;
+                                                    //$serviceType = \App\Models\ServiceType::find($item['service_name']);
+                                                    $serviceTypeinline = $item->service_name;
                                                 @endphp
-                                                {{ $serviceinline->service_name }}
-                                            </h6>
-                                            <span
-                                                class="text-xxs fw-600 text-primary">[{{ $servicetypeinline->service_type_name }}]</span>
-                                        </div>
-                                        <div class="col-2">
-                                                <input class="form-control" type="color"  pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"  wire:model="colors.{{ $key }}" wire:change="changeColor({{$key}})">
-                                        </div>
-                                        <div class="col-3">
-                                            <input type="number" class="form-control form-control-sm text-center"
-                                                wire:model="prices.{{ $key }}" value="10000">
-                                        </div>
-                                        <div class="col-3">
-                                            <div class="input-group align-items-center">
-                                                <div class="badge bg-secondary text-xxs text-center p-66" type="button"
-                                                    wire:click="decrease({{ $key }})"><i
-                                                        class="fa fa-minus"></i></div>
-                                                <input type="number" class="form-control form-control-sm text-center"
-                                                    wire:model="quantity.{{ $key }}">
-                                                <div class="badge bg-primary text-xxs text-center p-66" type="button"
-                                                    wire:click="increase({{ $key }})"><i
-                                                        class="fa fa-plus"></i></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                                {{ $serviceinline }}
+                                            </h5>
+                                            <span class="text-xxs fw-600 text-primary" >{{ $serviceTypeinline }}
+                                            </span>
+                                        </div> 
+                                        <div class="col-2"> 
+                                            <input class="form-control" type="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" wire:model="orderDetails.{{ $key }}.color_code" wire:change="changeColor({{ $key }})">
+                                            </div> 
+                                            <div class="col-3"> 
+                                            <input type="number" class="form-control form-control-sm text-center" {{number_format ($item->service_price, 3)}}> 
+                                            </div> 
+                                            <div class="col-3"> 
+                                            <div class="input-group align-items-center"> 
+                                                <div class="badge bg-secondary text-xxs text-center p-66" type="button" wire:click="decrease({{ $key }})"><i class="fa fa-minus"></i>
+                                                </div> 
+                                                <input type="number" class="form-control form-control-sm text-center" wire:model="orderDetails.{{ $key }}.service_quantity"> 
+                                            <div class="badge bg-primary text-xxs text-center p-66" type="button" wire:click="increase({{ $key }})"><i class="fa fa-plus"></i>
+                                            </div> 
+                                            </div> 
+                                        </div> 
+                                 </div> 
                                 </div>
-                            @endforeach
+                            @endforeach 
+                        </div> 
+                    </div> 
+                    <div class="row align-items-center g-3 px-4 mt-4">
+                        <div class="col-4">
+                            <select class="form-select" wire:model="newService.service_id"> 
+                                <option value="">Select Service</option> 
+                                    @foreach($services as $service) 
+                                        <option value="{{ $service->id }}">{{ $service->service_name }}</option> 
+                                    @endforeach 
+                            </select>
                         </div>
-                    </div>
+                        <div class="col-4"> 
+                            <select class="form-select" wire:model="newService.service_type_id">
+                                <option value="">Select Service Type</option> 
+                                @foreach($service_types as $serviceType) 
+                                    <option value="{{ $serviceType->id }}">{{ $serviceType->service_type_name }}</option> 
+                                @endforeach 
+                            </select> 
+                        </div> 
+                        <div class="col-2"> 
+                            <input class="form-control" type="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" wire:model="newService.color_code"> 
+                        </div> 
+                        <div class="col-2">
+                            <input type="number" class="form-control form-control-sm text-center" wire:model="newService.service_price"> 
+                        </div> 
+                        <div class="col-2"> 
+                            <input type="number" class="form-control form-control-sm text-center" wire:model="newService.service_quantity"> 
+                        </div> 
+                        <div class="col-2"> 
+                            <button class="btn btn-primary" wire:click="addService">Add Service</button> 
+                        </div> 
+                    </div>                        
                 </div>
+                  
+                        
                 <hr>
                 <div class="row align-items-center px-4 mb-3">
                     <div class="col">
