@@ -54,16 +54,15 @@
                                         {{ $lang->data['status'] ?? 'Status' }}</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7">
                                         {{ $lang->data['payment'] ?? 'Payment' }}</th>
-                                        <th class="text-uppercase text-secondary text-xs opacity-7 ps-2">
-                                            {{ $lang->data['created_by'] ?? 'Created By' }}</th>
+                                    <th class="text-uppercase text-secondary text-xs opacity-7 ps-2">
+                                        {{ $lang->data['created_by'] ?? 'Created By' }}</th>
                                     <th class="text-secondary opacity-7">Actions</th>
                                 </tr>
                             </thead>
                             <tbody wire:poll="refresh">
                                 @foreach ($orders as $item)
-                                
                                     <tr>
-                                        <td >
+                                        <td>
                                             <p class="d-flex justify-content-between text-sm px-3 mb-0">
                                                 <span
                                                     class="me-2 ">{{ $lang->data['order_id'] ?? 'Order ID' }}:</span>
@@ -115,7 +114,9 @@
                                         </td>
                                         <td class="px-3">
                                             @php
-                                                $paidamount = \App\Models\Payment::where('order_id', $item->id)->sum('received_amount');
+                                                $paidamount = \App\Models\Payment::where('order_id', $item->id)->sum(
+                                                    'received_amount',
+                                                );
                                             @endphp
                                             <p class="text-sm mb-0">
                                                 <span
@@ -124,21 +125,19 @@
                                                     {{ number_format($item->total, 3) }}</span>
                                             </p>
                                             <p class="text-sm mb-1">
-                                                <span
-                                                    class="me-2">{{ $lang->data['paid_amount'] ?? 'Paid' }}:</span>
+                                                <span class="me-2">{{ $lang->data['paid_amount'] ?? 'Paid' }}:</span>
 
                                                 <span class="font-weight-bold">{{ getCurrency() }}
                                                     {{ number_format($paidamount, 3) }}</span>
                                             </p>
                                             @if ($paidamount < $item->total)
-                                            @if($item->status != 4)
-                                                <a data-bs-toggle="modal" data-bs-target="#addpayment"
-                                                    wire:click="payment({{ $item->id }})" type="button"
-                                                    class="badge badge-xs badge-success text-xs fw-600">
-                                                    {{ $lang->data['add_payment'] ?? 'Add Payment' }}
-                                                </a>
-                                           
-                                            @endif
+                                                @if ($item->status != 4)
+                                                    <a data-bs-toggle="modal" data-bs-target="#addpayment"
+                                                        wire:click="payment({{ $item->id }})" type="button"
+                                                        class="badge badge-xs badge-success text-xs fw-600">
+                                                        {{ $lang->data['add_payment'] ?? 'Add Payment' }}
+                                                    </a>
+                                                @endif
                                             @else
                                                 <a data-bs-toggle="modal" type="button"
                                                     class="badge badge-xs badge-dark text-xs fw-600">
@@ -148,16 +147,16 @@
                                         </td>
                                         <td>
                                             <p class="text-sm mb-0 text-uppercase">
-                                                {{ $item->user->name ?? "" }}</p>
+                                                {{ $item->user->name ?? '' }}</p>
                                         </td>
-                                        <td >
+                                        <td>
                                             <a href="{{ route('admin.view_single_order', $item->id) }}" type="button"
                                                 class="badge badge-xs badge-primary text-xs fw-600">
                                                 {{ $lang->data['view'] ?? 'View' }}
                                             </a>
 
-                                            <a href="{{ route('admin.edit_order', $item->id) }}" type="button"
-                                                class="badge badge-xs badge bg-warning text-dark text-xs fw-600">
+                                            <a href="{{ route('admin.edit_orders', $item->id) }}" type="button"
+                                                class="badge badge-xs badge-warning fw-600 text-xs">
                                                 {{ $lang->data['edit_order'] ?? '  Edit  ' }}
                                             </a>
                                         </td>
@@ -165,10 +164,9 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        @if($hasMorePages)
-                        <div
-                            x-data="{
-                                init () {
+                        @if ($hasMorePages)
+                            <div x-data="{
+                                init() {
                                     let observer = new IntersectionObserver((entries) => {
                                         entries.forEach(entry => {
                                             if (entry.isIntersecting) {
@@ -182,15 +180,14 @@
                                     observer.observe(this.$el);
                                 }
                             }"
-                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-4"
-                        >
-                           <div class="text-center pb-2 d-flex justify-content-center align-items-center">
-                               Loading...
-                               <div class="spinner-grow d-inline-flex mx-2 text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                              </div>
+                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-4">
+                                <div class="text-center pb-2 d-flex justify-content-center align-items-center">
+                                    Loading...
+                                    <div class="spinner-grow d-inline-flex mx-2 text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
                         @endif
                     </div>
                 </div>
@@ -271,34 +268,33 @@
                                             <label
                                                 class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label>
                                             <select class="form-select" wire:model="payment_type">
-                                                <@foreach($paymentTypes as $paymentType) 
-                                                <option class="select-box" value="{{ $paymentType->id }}">{{ $paymentType->name }}</option>
-                                                 @endforeach 
-                                                </select> 
-                                            @error('payment_mode')
-                                                <span class="error text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="col-12">
-                                        <label
-                                            class="form-label">{{ $lang->data['notes_remarks'] ?? 'Notes / Remarks' }}</label>
-                                        <textarea class="form-control" placeholder="Enter Notes"
-                                            wire:model="note"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">{{ $lang->data['cancel'] ?? 'Cancel' }}</button>
-                        <button type="submit" class="btn btn-primary"
-                            wire:click.prevent="addPayment()">{{ $lang->data['save'] ?? 'Save' }}</button>
-                    </div>
-                </form>
+                                                <@foreach ($paymentTypes as $paymentType)
+                                                    <option class="select-box" value="{{ $paymentType->id }}">
+                                                        {{ $paymentType->name }}</option>
+                    @endforeach
+                    </select>
+                    @error('payment_mode')
+                        <span class="error text-danger">{{ $message }}</span>
+                    @enderror
             </div>
         </div>
+        <hr>
+        <div class="col-12">
+            <label class="form-label">{{ $lang->data['notes_remarks'] ?? 'Notes / Remarks' }}</label>
+            <textarea class="form-control" placeholder="Enter Notes" wire:model="note"></textarea>
+        </div>
     </div>
+</div>
+</div>
+@endif
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary"
+        data-bs-dismiss="modal">{{ $lang->data['cancel'] ?? 'Cancel' }}</button>
+    <button type="submit" class="btn btn-primary"
+        wire:click.prevent="addPayment()">{{ $lang->data['save'] ?? 'Save' }}</button>
+</div>
+</form>
+</div>
+</div>
+</div>
 </div>

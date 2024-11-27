@@ -52,7 +52,9 @@
                                 <ul class="list-group customhover">
                                     @foreach ($customers as $row)
                                         <li class="list-group-item customhover2"
-                                            wire:click="selectCustomer({{ $row->id }})">{{str_pad($row->id, 4, '0', STR_PAD_LEFT)}}-{{ $row->name }} - {{$row->phone}}</li>
+                                            wire:click="selectCustomer({{ $row->id }})">
+                                            {{ str_pad($row->id, 4, '0', STR_PAD_LEFT) }}-{{ $row->name }} -
+                                            {{ $row->phone }}</li>
                                     @endforeach
                                 </ul>
                             @endif
@@ -78,8 +80,8 @@
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xs opacity-7 ps-5">
                                         {{ $lang->data['service'] ?? 'Service' }}</th>
-                                        <th class="text-uppercase text-secondary text-xs opacity-7 ps-5">
-                                            {{ $lang->data['color'] ?? 'Color' }}</th>
+                                    <th class="text-uppercase text-secondary text-xs opacity-7 ps-5">
+                                        {{ $lang->data['color'] ?? 'Color' }}</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7">
                                         {{ $lang->data['rate'] ?? 'Rate' }}</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7">
@@ -98,10 +100,16 @@
                                                 @php
                                                     $serviceinline = null;
                                                     if (isset($item['service'])) {
-                                                        $serviceinline = \App\Models\Service::where('id', $item['service'])->first();
+                                                        $serviceinline = \App\Models\Service::where(
+                                                            'id',
+                                                            $item['service'],
+                                                        )->first();
                                                     }
                                                     if (isset($item['service_type'])) {
-                                                        $servicetypeinline = \App\Models\ServiceType::where('id', $item['service_type'])->first();
+                                                        $servicetypeinline = \App\Models\ServiceType::where(
+                                                            'id',
+                                                            $item['service_type'],
+                                                        )->first();
                                                     }
                                                 @endphp
                                                 {{ $serviceinline->service_name }}
@@ -110,7 +118,10 @@
                                                 class="text-xxs fw-600 text-primary">[{{ $servicetypeinline->service_type_name }}]</span>
                                         </div>
                                         <div class="col-2">
-                                                <input class="form-control" type="color"  pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"  wire:model="colors.{{ $key }}" wire:change="changeColor({{$key}})">
+                                            <input class="form-control" type="color"
+                                                pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+                                                wire:model="colors.{{ $key }}"
+                                                wire:change="changeColor({{ $key }})">
                                         </div>
                                         <div class="col-3">
                                             <input type="number" class="form-control form-control-sm text-center"
@@ -151,37 +162,39 @@
             </div>
         </div>
     </div>
-    <div class="modal fade " id="servicetype" tabindex="-1" role="dialog" aria-labelledby="servicetype"
+
+    <div class="modal fade" id="servicetype" tabindex="-1" role="dialog" aria-labelledby="servicetype"
         aria-hidden="true" wire:ignore.self>
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h6 class="modal-title fw-600" id="servicetype">
-                        {{ $lang->data['select_service_type'] ?? 'Select Service Type' }}</h6>
+                        {{ $lang->data['select_service_type'] ?? 'Select Service Type' }}
+                    </h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form>
+                <form wire:submit.prevent="addItem">
                     <div class="modal-body">
-                        <div class="row g-2 align-items-center"
-                            x-data="{servtypes : @entangle('service_types'),seltype : @entangle('selected_type')}">
-                            <template x-for="item in servtypes">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" :id="'test'+item.id" name="test"
-                                        :value="item.id" x-model="seltype">
-                                    <label class="form-check-label" :for="'test'+item.id"></label>
-                                    <span x-text="item.service_type_name"> </span>
-                                </div>
-                            </template>
-                            @error('service_error') <span class="text-danger"> {{$message}}</span> @enderror
+                        <div class="row g-2 align-items-center" x-data="{ servtypes: @entangle('service_types'), seltype: @entangle('selected_type') }">
+                            <div class="row row-cols-2 row-cols-md-4 g-2">
+                                <template x-for="item in servtypes">
+                                    <div class="col">
+                                        <button type="button"
+                                            class="btn btn-block w-100 text-center py-3 fs-6 rounded-3"
+                                            style="aspect-ratio: 1 / 1;"
+                                            :class="seltype === item.id ? 'btn-primary' : 'btn-outline-secondary'"
+                                            @click="seltype = item.id; $wire.addItem()"
+                                            x-text="item.service_type_name">
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                            @error('service_error')
+                                <span class="text-danger"> {{ $message }}</span>
+                            @enderror
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">{{ $lang->data['cancel'] ?? 'Cancel' }}</button>
-                        <button type="submit" class="btn btn-primary"
-                            wire:click.prevent="addItem">{{ $lang->data['add'] ?? 'Add' }}</button>
                     </div>
                 </form>
             </div>
@@ -192,7 +205,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title fw-600" id="addcustomer">{{ $lang->data['add_customer'] ?? 'Add Customer' }}
+                    <h6 class="modal-title fw-600" id="addcustomer">
+                        {{ $lang->data['add_customer'] ?? 'Add Customer' }}
                     </h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -225,7 +239,8 @@
                             <div class="col-md-12 mb-1">
                                 <label class="form-label">{{ $lang->data['email'] ?? 'Email' }}</label>
                                 <input type="text" class="form-control"
-                                    placeholder="{{ $lang->data['enter_email'] ?? 'Enter Email' }}" wire:model="email">
+                                    placeholder="{{ $lang->data['enter_email'] ?? 'Enter Email' }}"
+                                    wire:model="email">
                                 @error('email')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -239,8 +254,7 @@
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">{{ $lang->data['address'] ?? 'Address' }}</label>
-                                <textarea type="text" class="form-control"
-                                    placeholder="{{ $lang->data['enter_address'] ?? 'Enter Address' }}"
+                                <textarea type="text" class="form-control" placeholder="{{ $lang->data['enter_address'] ?? 'Enter Address' }}"
                                     wire:model="address"></textarea>
                             </div>
                             <div class="col-md-12 mb-1">
@@ -263,8 +277,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade " id="payment" tabindex="-1" role="dialog" aria-labelledby="payment" aria-hidden="true"
-        wire:ignore.self>
+    <div class="modal fade " id="payment" tabindex="-1" role="dialog" aria-labelledby="payment"
+        aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -289,10 +303,10 @@
                                 </div>
                             @endforeach
                             <div class=" col-12">
-                                @if($addons)
-                                @if(count($addons) > 0)
-                                <hr>
-                                @endif
+                                @if ($addons)
+                                    @if (count($addons) > 0)
+                                        <hr>
+                                    @endif
                                 @endif
                                 <div class="row align-items-center">
                                     <div class="col-md-6 mb-1">
@@ -301,8 +315,7 @@
                                         <input type="date" class="form-control" wire:model="delivery_date">
                                     </div>
                                     <div class="col-md-6 mb-1">
-                                        <label
-                                            class="form-label">{{ $lang->data['discount'] ?? 'Discount' }}</label>
+                                        <label class="form-label">{{ $lang->data['discount'] ?? 'Discount' }}</label>
                                         <input type="number" class="form-control"
                                             placeholder="{{ $lang->data['enter_amount'] ?? 'Enter Amount' }}"
                                             wire:model="discount">
@@ -349,19 +362,26 @@
                                     </div>
                                     <div class="col-md-1 m-0 p-0">
                                         <label for="" class="form-label"> &nbsp; </label>
-                                        <button class="btn btn-icon btn-2 btn-primary " type="button" wire:click="magicFill">
-                                            <span class="btn-inner--icon px-0 mx-0"><i class="fa fa-magic m-0 p-0"></i></span>
+                                        <button class="btn btn-icon btn-2 btn-primary " type="button"
+                                            wire:click="magicFill">
+                                            <span class="btn-inner--icon px-0 mx-0"><i
+                                                    class="fa fa-magic m-0 p-0"></i></span>
                                         </button>
                                     </div>
-                                    
-                                    <div class="col-6 mx-2 mb-1"> 
-                                        <label class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label> 
+
+                                    <div class="col-6 mx-2 mb-1">
+                                        <label
+                                            class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label>
                                         <select class="form-select" wire:model="payment_type">
-                                             <option value="">{{ $lang->data['choose_payment_mode'] ?? 'Choose Payment Mode' }}</option>
-                                              @foreach($paymentTypes as $paymentType) 
-                                              <option class="select-box" value="{{ $paymentType->id }}">{{ $paymentType->name }}</option>
-                                               @endforeach </select> 
-                                            </div>
+                                            <option value="">
+                                                {{ $lang->data['choose_payment_mode'] ?? 'Choose Payment Mode' }}
+                                            </option>
+                                            @foreach ($paymentTypes as $paymentType)
+                                                <option class="select-box" value="{{ $paymentType->id }}">
+                                                    {{ $paymentType->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     @error('paid_amount')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
@@ -370,7 +390,7 @@
                                     @enderror
 
                                 </div>
-                                
+
                                 <hr>
                                 <div class="row align-items-center">
                                     <div class="col text-sm fw-600">{{ $lang->data['balance'] ?? 'Balance' }}:</div>
@@ -381,22 +401,31 @@
                                 <div class="col-12">
                                     <label
                                         class="form-label">{{ $lang->data['notes_remarks'] ?? 'Notes / Remarks' }}</label>
-                                    <textarea class="form-control"
-                                        placeholder="{{ $lang->data['enter_notes'] ?? 'Enter Notes' }}"
+                                    <textarea class="form-control" placeholder="{{ $lang->data['enter_notes'] ?? 'Enter Notes' }}"
                                         wire:model="payment_notes"></textarea>
                                 </div>
                                 @error('error')
-                                <div class="col-12 mt-2">
-                                    <div class="alert alert-danger" role="alert">
-                                        <strong class="text-white"> 
-                                            <span class="mx-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                            </span>
-                                            {{$message}}
-                                        </strong>
+                                    <div class="col-12 mt-2">
+                                        <div class="alert alert-danger" role="alert">
+                                            <strong class="text-white">
+                                                <span class="mx-1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="feather feather-alert-triangle">
+                                                        <path
+                                                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                                        <line x1="12" y1="9" x2="12"
+                                                            y2="13" />
+                                                        <line x1="12" y1="17" x2="12.01"
+                                                            y2="17" />
+                                                    </svg>
+                                                </span>
+                                                {{ $message }}
+                                            </strong>
+                                        </div>
+
                                     </div>
-                                    
-                                </div>
                                 @enderror
                             </div>
                         </div>
@@ -411,15 +440,30 @@
             </div>
         </div>
     </div>
-    <script>
-         "use strict";
-        Livewire.on('printPage', orderId => {
-            var $id = orderId;
-            window.open(
-                '{{ url('admin/orders/print-order/') }}' + '/' + $id,
-                '_blank'
-            );
-            window.onfocus = function () { setTimeout(function () { window.location.reload(); }, 100); }
-        })
-    </script>
 </div>
+<script>
+    "use strict";
+    Livewire.on('printPage', orderId => {
+        var $id = orderId;
+        window.open(
+            '{{ url('admin/orders/print-order/') }}' + '/' + $id,
+            '_blank'
+        );
+        window.onfocus = function() {
+            setTimeout(function() {
+                window.location.reload();
+            }, 100);
+        }
+    })
+</script>
+<script>
+    document.addEventListener('livewire:load', function() {
+        window.addEventListener('close-modal', event => {
+            var modalElement = document.getElementById('servicetype');
+            var modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        });
+    });
+</script>

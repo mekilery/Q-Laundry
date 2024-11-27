@@ -9,4 +9,9 @@ class ServiceType extends Model
         'service_type_name',
         'is_active'
     ];
-}
+    public function services()
+    {
+        return $this->belongsTo(service::class);
+        }
+    }
+    

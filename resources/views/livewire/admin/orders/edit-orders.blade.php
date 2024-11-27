@@ -1,8 +1,8 @@
+<!-- resources/views/admin/orders/edit.blade.php -->
 <div>
     <div class="row align-items-center justify-content-between mb-4">
-    
         <div class="col">
-            <h5 class="fw-500 text-white">{{ $lang->data['Edit_order'] ?? 'Edit Order' }}</h5>
+            <h5 class="fw-500 text-white">{{ $lang->data['edit_order'] ?? 'Edit Order' }}</h5>
         </div>
         <div class="col-auto">
             <a href="{{ route('admin.view_orders') }}" class="btn btn-icon btn-3 btn-white text-primary mb-0">
@@ -10,51 +10,54 @@
             </a>
         </div>
     </div>
-        <div class="row match-height">
-            <div class="col-lg-7 col-12">
-                <div class="card mb-4">
-                    <div class="card-header p-4">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input type="text" class="form-control"
-                                    placeholder="{{ $lang->data['search_here'] ?? 'Search Here' }}"
-                                    wire:model="search_query">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pos-card-wrapper-scroll-y my-custom-scrollbar-pos-card  mb-3">
-                        <div class="row align-items-center g-3 px-4 ">
-                            @foreach ($services as $item)
-                                <div class="col-lg-3 col-6 text-center">
-                                    <div class="border-dashed border-1 border-secondary border-radius-md py-1">
-                                        <a type="button" data-bs-toggle="modal" data-bs-target="#servicetype"
-                                            wire:click="selectService({{ $item->id }})">
-                                            <div class="avatar avatar-xl mb-3">
-                                                <img src="{{ asset('assets/img/service-icons/' . $item->icon) }}"
-                                                    class="rounded p-2">
-                                            </div>
-                                            <p class="text-xs font-weight-bold">{{ $item->service_name }}</p>
-                                        </a>
-                                    </div>
-                                </div>
-                            @endforeach
+
+    <div class="row match-height">
+        <div class="col-lg-7 col-12">
+            <div class="card mb-4">
+                <div class="card-header p-4">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="text" class="form-control"
+                                placeholder="{{ $lang->data['search_here'] ?? 'Search Here' }}"
+                                wire:model="search_query">
                         </div>
                     </div>
                 </div>
+                <div class="pos-card-wrapper-scroll-y my-custom-scrollbar-pos-card mb-3">
+                    <div class="row align-items-center g-3 px-4">
+                        @foreach ($services as $item)
+                            <div class="col-lg-3 col-6 text-center">
+                                <div class="border-dashed border-1 border-secondary border-radius-md py-1">
+                                    <a type="button" data-bs-toggle="modal" data-bs-target="#servicetype"
+                                        wire:click="selectService({{ $item->id }})">
+                                        <div class="avatar avatar-xl mb-3">
+                                            <img src="{{ asset('assets/img/service-icons/' . $item->icon) }}"
+                                                class="rounded p-2">
+                                        </div>
+                                        <p class="text-xs font-weight-bold">{{ $item->service_name }}</p>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
-            
-            <div class="col-lg-5 col-12">
+        </div>
+
+        <div class="col-lg-5 col-12">
             <div class="card mb-4">
                 <div class="card-header p-4">
                     <div class="row">
                         <div class="col-md-9 mb-3">
                             <input type="text" wire:model="customer_query" class="form-control"
-                                   placeholder="{{ is_null($customer_name) ? 'Select Customer' : $customer_name }}">
+                                placeholder="@if (!$selected_customer) {{ $lang->data['select_a_customer'] ?? 'Select A Customer' }} @else {{ $selected_customer->name }} @endif">
                             @if ($customers && count($customers) > 0)
                                 <ul class="list-group customhover">
                                     @foreach ($customers as $row)
                                         <li class="list-group-item customhover2"
-                                            wire:click="selectCustomer({{ $row->id }})">{{str_pad($row->id, 4, '0', STR_PAD_LEFT)}}-{{ $row->name }} - {{$row->phone}}</li>
+                                            wire:click="selectCustomer({{ $row->id }})">
+                                            {{ str_pad($row->id, 4, '0', STR_PAD_LEFT) }}-{{ $row->name }} -
+                                            {{ $row->phone }}</li>
                                     @endforeach
                                 </ul>
                             @endif
@@ -66,10 +69,10 @@
                             </button>
                         </div>
                         <div class="col-md-6">
-                            <input type="text" required class="form-control" readonly value="{{ $order_number }}">
+                            <input type="text" required class="form-control" readonly value="{{ $order_id }}">
                         </div>
                         <div class="col-md-6">
-                            <input type="text"  class="form-control" readonly wire:model="date";>
+                            <input type="date" class="form-control" wire:model="date">
                         </div>
                     </div>
                 </div>
@@ -80,87 +83,80 @@
                                 <tr>
                                     <th class="text-uppercase text-secondary text-xs opacity-7 ps-5">
                                         {{ $lang->data['service'] ?? 'Service' }}</th>
-                                        <th class="text-uppercase text-secondary text-xs opacity-7 ps-5">
-                                            {{ $lang->data['color'] ?? 'Color' }}</th>
+                                    <th class="text-uppercase text-secondary text-xs opacity-7 ps-5">
+                                        {{ $lang->data['color'] ?? 'Color' }}</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7">
                                         {{ $lang->data['rate'] ?? 'Rate' }}</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7">
                                         {{ $lang->data['qty'] ?? 'QTY' }}</th>
+                                    <th class="text-uppercase text-secondary text-xs opacity-7">
+                                        {{ $lang->data['actions'] ?? 'Actions' }}</th>
                                 </tr>
                             </thead>
                         </table>
-                    </div>        
-                    <div class="order-list-wrapper-scroll-y my-custom-scrollbar-order-list"> 
-                        <div class="row align-items-center g-3 px-4">
-                             @foreach ($orderDetails as $key => $item) 
-                                <div class="col-lg-12 col-12"> 
-                                    <div class="row ms-2 align-items-center"> 
-                                        <div class="col-4"> 
-                                            <h5 class="text-xs h6 mb-0">
-                                                                                               @php
-                                                    $service = \App\Models\Service::find($item['service_id']);
-                                                    $serviceinline = $service->service_name;
-                                                    //$serviceType = \App\Models\ServiceType::find($item['service_name']);
-                                                    $serviceTypeinline = $item->service_name;
+                    </div>
+                    <div class="order-list-wrapper-scroll-y my-custom-scrollbar-order-list">
+                        <div class="row align-items-center g-3 px-4 ">
+                            @foreach ($selservices as $key => $item)
+                                <div class="col-lg-12 col-12">
+                                    <div class="row ms-2 align-items-center">
+                                        <div class="col-3">
+                                            <h6 class="text-xs h6 mb-0">
+                                                @php
+                                                    $serviceinline = null;
+                                                    $servicetypeinline = null;
+                                                    if (isset($item['service'])) {
+                                                        $serviceinline = \App\Models\Service::where(
+                                                            'id',
+                                                            $item['service'],
+                                                        )->first();
+                                                    }
+                                                    if (isset($item['service_type'])) {
+                                                        $servicetypeinline = \App\Models\ServiceType::where(
+                                                            'id',
+                                                            $item['service_type'],
+                                                        )->first();
+                                                    }
                                                 @endphp
-                                                {{ $serviceinline }}
-                                            </h5>
-                                            <span class="text-xxs fw-600 text-primary" >{{ $serviceTypeinline }}
-                                            </span>
-                                        </div> 
-                                        <div class="col-2"> 
-                                            <input class="form-control" type="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" wire:model="orderDetails.{{ $key }}.color_code" wire:change="changeColor({{ $key }})">
-                                            </div> 
-                                            <div class="col-3"> 
-                                            <input type="number" class="form-control form-control-sm text-center" (wire:model="prices.{{ $key }}" ? value="{{number_format ($item->service_price, 3)}}")> 
-                                            </div> 
-                                            <div class="col-3"> 
-                                            <div class="input-group align-items-center"> 
-                                                <div class="badge bg-secondary text-xxs text-center p-66" type="button" wire:click="decrease({{ $key }})"><i class="fa fa-minus"></i>
-                                                </div> 
-                                                <input type="number" class="form-control form-control-sm text-center" wire:click="quantity.{{ $key }}"> 
-                                            <div class="badge bg-primary text-xxs text-center p-66" type="button" wire:click="increase{{ $key }}"><i class="fa fa-plus"></i>
-                                            </div> 
-                                            </div> 
-                                        </div> 
-                                 </div> 
+                                                {{ $serviceinline->service_name }}
+                                            </h6>
+                                            <span
+                                                class="text-xxs fw-600 text-primary">[{{ $servicetypeinline->service_type_name }}]</span>
+                                        </div>
+                                        <div class="col-2">
+                                            <input class="form-control" type="color"
+                                                pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
+                                                wire:model="colors.{{ $key }}"
+                                                wire:change="changeColor({{ $key }})">
+                                        </div>
+                                        <div class="col-2">
+                                            <input type="number" class="form-control form-control-sm text-center"
+                                                wire:model="prices.{{ $key }}" value="10000">
+                                        </div>
+                                        <div class="col-3">
+                                            <div class="input-group align-items-center">
+                                                <div class="badge bg-secondary text-xxs text-center p-66" type="button"
+                                                    wire:click="decrease({{ $key }})"><i
+                                                        class="fa fa-minus"></i></div>
+                                                <input type="number" class="form-control form-control-sm text-center"
+                                                    wire:model="quantity.{{ $key }}">
+                                                <div class="badge bg-primary text-xxs text-center p-66" type="button"
+                                                    wire:click="increase({{ $key }})"><i
+                                                        class="fa fa-plus"></i></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-2">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                wire:click="removeService({{ $key }})">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            @endforeach 
-                        </div> 
-                    </div> 
-                    <div class="row align-items-center g-3 px-4 mt-4">
-                        <div class="col-4">
-                            <select class="form-select" wire:model="newService.service_id"> 
-                                <option value="">Select Service</option> 
-                                    @foreach($services as $service) 
-                                        <option value="{{ $service->id }}">{{ $service->service_name }}</option> 
-                                    @endforeach 
-                            </select>
+                            @endforeach
                         </div>
-                        <div class="col-4"> 
-                            <select class="form-select" wire:model="newService.service_type_id">
-                                <option value="">Select Service Type</option> 
-                                @foreach($service_types as $serviceType) 
-                                    <option value="{{ $serviceType->id }}">{{ $serviceType->service_type_name }}</option> 
-                                @endforeach 
-                            </select> 
-                        </div> 
-                        <div class="col-2"> 
-                            <input class="form-control" type="color" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" wire:model="newService.color_code"> 
-                        </div> 
-                        <div class="col-2">
-                            <input type="number" class="form-control form-control-sm text-center" wire:model="newService.service_price"> 
-                        </div> 
-                        <div class="col-2"> 
-                            <input type="number" class="form-control form-control-sm text-center" wire:model="newService.service_quantity"> 
-                        </div> 
-                        <div class="col-2"> 
-                            <button class="btn btn-primary" wire:click="addService">Add Service</button> 
-                        </div> 
-                    </div>                        
+                    </div>
                 </div>
-                  
-                        
                 <hr>
                 <div class="row align-items-center px-4 mb-3">
                     <div class="col">
@@ -172,46 +168,52 @@
                         <button type="button" wire:click="clearAll"
                             class="btn btn-danger me-2 mb-0">{{ $lang->data['clear_all'] ?? 'Clear All' }}</button>
                         <button type="submit" class="btn btn-primary mb-0" data-bs-toggle="modal"
-                            data-bs-target="#payment">{{ $lang->data['Update_order'] ?? 'Update Order' }}</button>
+                            data-bs-target="#payment">{{ $lang->data['update_order'] ?? 'Update Order' }}</button>
                     </div>
                 </div>
-            
             </div>
-            
-
         </div>
-    
-    <div class="modal fade " id="servicetype" tabindex="-1" role="dialog" aria-labelledby="servicetype"
+    </div>
+
+    <!-- Service Type Modal (Similar to the existing one) -->
+    @push('styles')
+        <style>
+            .aspect-square {
+                aspect-ratio: 1 / 1;
+            }
+        </style>
+    @endpush
+    <div class="modal fade" id="servicetype" tabindex="-1" role="dialog" aria-labelledby="servicetype"
         aria-hidden="true" wire:ignore.self>
-        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h6 class="modal-title fw-600" id="servicetype">
-                        {{ $lang->data['select_service_type'] ?? 'Select Service Type' }}</h6>
+                        {{ $lang->data['select_service_type'] ?? 'Select Service Type' }}
+                    </h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form>
+                <form wire:submit.prevent="addItem">
                     <div class="modal-body">
-                        <div class="row g-2 align-items-center"
-                            x-data="{servtypes : @entangle('service_types'),seltype : @entangle('selected_type')}">
-                            <template x-for="item in servtypes">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" :id="'test'+item.id" name="test"
-                                        :value="item.id" x-model="seltype">
-                                    <label class="form-check-label" :for="'test'+item.id"></label>
-                                    <span x-text="item.service_type_name"> </span>
-                                </div>
-                            </template>
-                            @error('service_error') <span class="text-danger"> {{$message}}</span> @enderror
+                        <div class="row g-2 align-items-center" x-data="{ servtypes: @entangle('service_types'), seltype: @entangle('selected_type') }">
+                            <div class="row row-cols-2 row-cols-md-3 g-2">
+                                <template x-for="item in servtypes">
+                                    <div class="col">
+                                        <button type="button"
+                                            class="btn btn-block w-100 text-center py-3 fs-6 rounded-3 aspect-square"
+                                            :class="seltype === item.id ? 'btn-primary' : 'btn-outline-secondary'"
+                                            @click="seltype = item.id; $wire.addItem()"
+                                            x-text="item.service_type_name">
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                            @error('service_error')
+                                <span class="text-danger"> {{ $message }}</span>
+                            @enderror
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">{{ $lang->data['cancel'] ?? 'Cancel' }}</button>
-                        <button type="submit" class="btn btn-primary"
-                            wire:click.prevent="addItem">{{ $lang->data['add'] ?? 'Add' }}</button>
                     </div>
                 </form>
             </div>
@@ -222,7 +224,8 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title fw-600" id="addcustomer">{{ $lang->data['add_customer'] ?? 'Add Customer' }}
+                    <h6 class="modal-title fw-600" id="addcustomer">
+                        {{ $lang->data['add_customer'] ?? 'Add Customer' }}
                     </h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -255,7 +258,8 @@
                             <div class="col-md-12 mb-1">
                                 <label class="form-label">{{ $lang->data['email'] ?? 'Email' }}</label>
                                 <input type="text" class="form-control"
-                                    placeholder="{{ $lang->data['enter_email'] ?? 'Enter Email' }}" wire:model="email">
+                                    placeholder="{{ $lang->data['enter_email'] ?? 'Enter Email' }}"
+                                    wire:model="email">
                                 @error('email')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
@@ -269,8 +273,7 @@
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">{{ $lang->data['address'] ?? 'Address' }}</label>
-                                <textarea type="text" class="form-control"
-                                    placeholder="{{ $lang->data['enter_address'] ?? 'Enter Address' }}"
+                                <textarea type="text" class="form-control" placeholder="{{ $lang->data['enter_address'] ?? 'Enter Address' }}"
                                     wire:model="address"></textarea>
                             </div>
                             <div class="col-md-12 mb-1">
@@ -293,13 +296,15 @@
             </div>
         </div>
     </div>
-    <div class="modal fade " id="payment" tabindex="-1" role="dialog" aria-labelledby="payment" aria-hidden="true"
-        wire:ignore.self>
+
+    <!-- Payment Modal with modifications for update -->
+    <div class="modal fade" id="payment" tabindex="-1" role="dialog" aria-labelledby="payment"
+        aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h6 class="modal-title fw-600" id="payment">
-                        {{ $lang->data['payment_details'] ?? 'Payment Details' }}</h6>
+                        {{ $lang->data['update_payment_details'] ?? 'Update Payment Details' }}</h6>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -319,10 +324,10 @@
                                 </div>
                             @endforeach
                             <div class=" col-12">
-                                @if($addons)
-                                @if(count($addons) > 0)
-                                <hr>
-                                @endif
+                                @if ($addons)
+                                    @if (count($addons) > 0)
+                                        <hr>
+                                    @endif
                                 @endif
                                 <div class="row align-items-center">
                                     <div class="col-md-6 mb-1">
@@ -331,8 +336,7 @@
                                         <input type="date" class="form-control" wire:model="delivery_date">
                                     </div>
                                     <div class="col-md-6 mb-1">
-                                        <label
-                                            class="form-label">{{ $lang->data['discount'] ?? 'Discount' }}</label>
+                                        <label class="form-label">{{ $lang->data['discount'] ?? 'Discount' }}</label>
                                         <input type="number" class="form-control"
                                             placeholder="{{ $lang->data['enter_amount'] ?? 'Enter Amount' }}"
                                             wire:model="discount">
@@ -379,19 +383,26 @@
                                     </div>
                                     <div class="col-md-1 m-0 p-0">
                                         <label for="" class="form-label"> &nbsp; </label>
-                                        <button class="btn btn-icon btn-2 btn-primary " type="button" wire:click="magicFill">
-                                            <span class="btn-inner--icon px-0 mx-0"><i class="fa fa-magic m-0 p-0"></i></span>
+                                        <button class="btn btn-icon btn-2 btn-primary " type="button"
+                                            wire:click="magicFill">
+                                            <span class="btn-inner--icon px-0 mx-0"><i
+                                                    class="fa fa-magic m-0 p-0"></i></span>
                                         </button>
                                     </div>
-                                    
-                                    <div class="col-6 mx-2 mb-1"> 
-                                        <label class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label> 
+
+                                    <div class="col-6 mx-2 mb-1">
+                                        <label
+                                            class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label>
                                         <select class="form-select" wire:model="payment_type">
-                                             <option value="">{{ $lang->data['choose_payment_mode'] ?? 'Choose Payment Mode' }}</option>
-                                              @foreach($paymentTypes as $paymentType) 
-                                              <option class="select-box" value="{{ $paymentType->id }}">{{ $paymentType->name }}</option>
-                                               @endforeach </select> 
-                                            </div>
+                                            <option value="">
+                                                {{ $lang->data['choose_payment_mode'] ?? 'Choose Payment Mode' }}
+                                            </option>
+                                            @foreach ($paymentTypes as $paymentType)
+                                                <option class="select-box" value="{{ $paymentType->id }}">
+                                                    {{ $paymentType->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                     @error('paid_amount')
                                         <span class="error text-danger">{{ $message }}</span>
                                     @enderror
@@ -400,7 +411,7 @@
                                     @enderror
 
                                 </div>
-                                
+
                                 <hr>
                                 <div class="row align-items-center">
                                     <div class="col text-sm fw-600">{{ $lang->data['balance'] ?? 'Balance' }}:</div>
@@ -411,22 +422,31 @@
                                 <div class="col-12">
                                     <label
                                         class="form-label">{{ $lang->data['notes_remarks'] ?? 'Notes / Remarks' }}</label>
-                                    <textarea class="form-control"
-                                        placeholder="{{ $lang->data['enter_notes'] ?? 'Enter Notes' }}"
+                                    <textarea class="form-control" placeholder="{{ $lang->data['enter_notes'] ?? 'Enter Notes' }}"
                                         wire:model="payment_notes"></textarea>
                                 </div>
                                 @error('error')
-                                <div class="col-12 mt-2">
-                                    <div class="alert alert-danger" role="alert">
-                                        <strong class="text-white"> 
-                                            <span class="mx-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-triangle"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                            </span>
-                                            {{$message}}
-                                        </strong>
+                                    <div class="col-12 mt-2">
+                                        <div class="alert alert-danger" role="alert">
+                                            <strong class="text-white">
+                                                <span class="mx-1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        class="feather feather-alert-triangle">
+                                                        <path
+                                                            d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                                        <line x1="12" y1="9" x2="12"
+                                                            y2="13" />
+                                                        <line x1="12" y1="17" x2="12.01"
+                                                            y2="17" />
+                                                    </svg>
+                                                </span>
+                                                {{ $message }}
+                                            </strong>
+                                        </div>
+
                                     </div>
-                                    
-                                </div>
                                 @enderror
                             </div>
                         </div>
@@ -435,21 +455,38 @@
                         <button type="button" class="btn btn-secondary"
                             data-bs-dismiss="modal">{{ $lang->data['cancel'] ?? 'Cancel' }}</button>
                         <button type="submit" class="btn btn-primary"
-                            wire:click.prevent="save">{{ $lang->data['update_print'] ?? 'Update & Print' }}</button>
+                            wire:click.prevent="updateOrder">{{ $lang->data['update_order'] ?? 'Update Order' }}</button>
                     </div>
-                </form>
             </div>
+            </form>
         </div>
     </div>
-    <script>
-        "use strict";
-       Livewire.on('printPage', orderId => {
-           var $id = orderId;
-           window.open(
-               '{{ url('admin/orders/print-order/') }}' + '/' + $id,
-               '_blank'
-           );
-           window.onfocus = function () { setTimeout(function () { window.location.reload(); }, 100); }
-       })
-   </script>
-<div>
+</div>
+</div>
+
+<script>
+    "use strict";
+    Livewire.on('printPage', orderId => {
+        var $id = orderId;
+        window.print(
+            '{{ url('admin/orders/print-order/') }}' + '/' + $id,
+            '_blank'
+        );
+        window.onfocus = function() {
+            setTimeout(function() {
+                window.location.reload();
+            }, 100);
+        }
+    })
+</script>
+<script>
+    document.addEventListener('livewire:load', function() {
+        window.addEventListener('close-modal', event => {
+            var modalElement = document.getElementById('servicetype');
+            var modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        });
+    });
+</script>

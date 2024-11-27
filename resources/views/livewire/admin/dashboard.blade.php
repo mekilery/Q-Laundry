@@ -206,7 +206,7 @@
                 tension: 0.9,
                 pointRadius: 2,
                 borderWidth: 2,
-                backgroundColor: ['#8392ab', '#faae42', '#2dce89', '#0083ff', '#f5365c'],
+                backgroundColor: ['#8392ab', '#faae42', '#2dce89', '#344767', '#f5365c'],
                 data: JSON.parse(chartdata),
                 fill: false
             }],

@@ -10,4 +10,6 @@ class ServiceDetail extends Model
         'service_type_id',
         'service_price'
     ];
+
+
 }

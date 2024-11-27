@@ -16,4 +16,17 @@ class Payment extends Model
         'financial_year_id',
         'created_by'
     ];
+    public function order() { 
+        return $this->belongsTo(Order::class, 'order_id', 'id'); 
+    } 
+    public function user() { 
+        return $this->belongsTo(User::class, 'created_by', 'id'); 
+    }
+    public function customer() { 
+        return $this->belongsTo(Customer::class, 'customer_id','id'); 
+    }   
+    public function payment_type()
+    {
+        return $this->belongsTo(PaymentType::class, 'payment_type', 'id');
+    }
 }
