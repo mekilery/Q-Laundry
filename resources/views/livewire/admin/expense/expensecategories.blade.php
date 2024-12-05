@@ -32,13 +32,13 @@
                                     <th class="text-center text-uppercase text-secondary text-xs opacity-7">
                                         {{ $lang->data['status'] ?? 'Status' }}</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7 ps-2">
-                                            {{ $lang->data['created_by'] ?? 'Created By' }}</th>
+                                        {{ $lang->data['created_by'] ?? 'Created By' }}</th>
                                     <th class="text-secondary opacity-7"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @php
-                                    
+
                                     $i = 1;
                                 @endphp
                                 @foreach ($categories as $row)
@@ -52,11 +52,11 @@
                                         </td>
                                         <td class="align-middle text-center">
                                             <a type="button"
-                                                class="badge badge-sm bg-dark text-uppercase">{{ getExpenseCategoryType($row->expense_category_type) }}</a>
+                                                class="badge badge-sm bg-dark text-uppercase">{{ $row->expense_category_type }}</a>
                                         </td>
                                         <td>
                                             <p class="text-sm mb-0 text-uppercase">
-                                                {{ $row->user->name ?? "" }}</p>
+                                                {{ $row->user->name ?? '' }}</p>
                                         </td>
                                         <td>
                                             <a data-bs-toggle="modal" wire:click="edit({{ $row->id }})"
@@ -104,18 +104,18 @@
                                 @enderror
                             </div>
                             <div class="col-md-12">
-                                <label
-                                    class="form-label">{{ $lang->data['category_type'] ?? 'Category Type' }}<span
+                                <label class="form-label">{{ $lang->data['category_type'] ?? 'Category Type' }}<span
                                         class="text-danger">*</span></label>
                                 <select class="form-select" wire:model="expense_category_type"
                                     wire:change="changeCategoryType">
                                     <option class="select-box" value="">
                                         {{ $lang->data['choose_expense_category'] ?? 'Choose Expense Category' }}
                                     </option>
-                                    <option class="select-box" value="1">{{ $lang->data['asset'] ?? 'Asset' }}
+                                    <option class="select-box" value="1">
+                                        {{ $lang->data['direct_expens'] ?? 'Direct Expenses' }}
                                     </option>
                                     <option class="select-box" value="2">
-                                        {{ $lang->data['liability'] ?? 'Liability' }}</option>
+                                        {{ $lang->data['indirect_expens'] ?? 'Indirect Expenses' }}</option>
                                 </select>
                                 @error('expense_category_type')
                                     <span class="error text-danger">{{ $message }}</span>
@@ -159,17 +159,18 @@
                             </div>
                             <div class="col-md-12">
                                 <label
-                                    class="form-label">{{ $lang->data['category_type'] ?? 'Category Type' }}<span
+                                    class="form-label">{{ $lang->data['expense_category_type'] ?? 'Expense Category Type' }}<span
                                         class="text-danger">*</span></label>
                                 <select class="form-select" wire:model="expense_category_type"
                                     wire:change="changeCategoryType">
                                     <option class="select-box" value="">
-                                        {{ $lang->data['choose_expense_category'] ?? 'Choose Expense Category' }}
+                                        {{ $lang->data['choose_expense_category_type'] ?? 'Choose Expense Category Type' }}
                                     </option>
-                                    <option class="select-box" value="1">{{ $lang->data['asset'] ?? 'Asset' }}
+                                    <option class="select-box" value="1">
+                                        {{ $lang->data['direct_expences'] ?? 'Direct Expences' }}
                                     </option>
                                     <option class="select-box" value="2">
-                                        {{ $lang->data['liability'] ?? 'Liability' }}</option>
+                                        {{ $lang->data['indirect_expences'] ?? 'Indirect Expences' }}</option>
                                 </select>
                                 @error('expense_category_type')
                                     <span class="error text-danger">{{ $message }}</span>
