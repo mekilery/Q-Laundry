@@ -154,11 +154,6 @@
                                                 class="badge badge-xs badge-primary text-xs fw-600">
                                                 {{ $lang->data['view'] ?? 'View' }}
                                             </a>
-
-                                            <a href="{{ route('admin.edit_orders', $item->id) }}" type="button"
-                                                class="badge badge-xs badge-warning fw-600 text-xs">
-                                                {{ $lang->data['edit_order'] ?? '  Edit  ' }}
-                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
