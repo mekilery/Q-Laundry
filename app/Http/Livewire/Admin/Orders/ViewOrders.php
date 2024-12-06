@@ -5,15 +5,17 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\PaymentType;
 use App\Models\Customer;
+use Illuminate\Http\Request;
 use illuminate\Support\Facades\Auth;
+use app\models\User;
 use App\Models\Translation;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Pagination\Cursor;
 class ViewOrders extends Component
 {
     public $orders;
-    public $paid_amount,$customer,$customer_name,$search_query;
-    public $order,$amount_to_pay,$note,$balance,$payment_type,$order_filter,$lang,$deleted_at;
+    public $paid_amount, $customer, $customer_name, $search_query;
+    public $order, $amount_to_pay, $note, $balance, $payment_type, $order_filter, $lang, $deleted_at;
     public $nextCursor;
     protected $currentCursor;
     public $hasMorePages;
@@ -28,41 +30,49 @@ class ViewOrders extends Component
         $this->orders = new EloquentCollection();
 
         $this->loadOrders();
-        if(session()->has('selected_language'))
-        {   /* if session has selected language */
-            $this->lang = Translation::where('id',session()->get('selected_language'))->first();
-        }
-        else{
+        if (session()->has('selected_language')) {
+            /* if session has selected language */
+            $this->lang = Translation::where('id', session()->get('selected_language'))->first();
+        } else {
             /* if session has no selected language */
-            $this->lang = Translation::where('default',1)->first();
+            $this->lang = Translation::where('default', 1)->first();
         }
     }
+    public function checkUserDetails()
+    {
+        $user = auth()->user();
+
+        // Log details for debugging
+        \Log::info('User Authentication Check', [
+            'is_authenticated' => auth()->check(),
+            'user_id' => $user ? $user->id : 'No User',
+            'user_attributes' => $user ? $user->getAttributes() : 'No User',
+            'user_type' => $user ? $user->user_type ?? ($user->type ?? 'Not Found') : 'No User',
+        ]);
+
+        return $user ? $user->user_type ?? $user->type : null;
+    }
     /* process while update the content */
-    public function updated($name,$value)
+    public function updated($name, $value)
     {
         /* if the updated element is search_query */
-        if($name == 'search_query' && $value != '')
-        {
-            
-            if($this->order_filter == '')
-            {
-            /* if order filter is empty */
-            
-               $this->reloadOrders();
-            }
-            else{
-                $this->orders = Order::where('status',$this->order_filter)
-                                            ->where(function($q) use ($value) {
-                                                $q->where('order_number','like','%'.$value.'%')
-                                                ->orwhere('customer_name','like','%'.$value.'%')
-                                                ->orwhere('deleted_at'=='null');
+        if ($name == 'search_query' && $value != '') {
+            if ($this->order_filter == '') {
+                /* if order filter is empty */
 
-                                            })
-                                            ->latest()
-                                            ->get();
+                $this->reloadOrders();
+            } else {
+                $this->orders = Order::where('status', $this->order_filter)
+                    ->where(function ($q) use ($value) {
+                        $q->where('order_number', 'like', '%' . $value . '%')
+                            ->orwhere('customer_name', 'like', '%' . $value . '%')
+                            ->orwhere('deleted_at' == 'null');
+                    })
+                    ->latest()
+                    ->get();
                 /* if order filter has data*/
 
-            /*  if(Auth::user()->user_type==1)
+                /*  if(Auth::user()->user_type==1)
                 {
 
                 $this->orders = \App\Models\Order::where('status',$this->order_filter)
@@ -81,17 +91,15 @@ class ViewOrders extends Component
                                             ->latest()
                                             ->get();
                                         }*/
-                }
-        }
-        elseif($name == 'search_query' && $value == '')
-        {
-            if($this->order_filter == '')
-            {
-                $this->reloadOrders();
             }
-            else{
-                $this->orders = Order::where('status',$this->order_filter)->latest()->get();
-            /*    if(Auth::user()->user_type==1)
+        } elseif ($name == 'search_query' && $value == '') {
+            if ($this->order_filter == '') {
+                $this->reloadOrders();
+            } else {
+                $this->orders = Order::where('status', $this->order_filter)
+                    ->latest()
+                    ->get();
+                /*    if(Auth::user()->user_type==1)
                 {
                     $this->orders = \App\Models\Order::where('status',$this->order_filter)->latest()->get();
                 } else {
@@ -100,88 +108,81 @@ class ViewOrders extends Component
             }
         }
         /* if the updated element is order_filter */
-        if($name == 'order_filter')
-        {
+        if ($name == 'order_filter') {
             $this->search_query = '';
-            if($value == '')
-            {
+            if ($value == '') {
                 $this->reloadOrders();
-            }
-            else{
-                $this->orders = Order::where('status',$value)->latest()->get();
-            /*  if(Auth::user()->user_type==1)
+            } else {
+                $this->orders = Order::where('status', $value)->latest()->get();
+                /*  if(Auth::user()->user_type==1)
                 {
                     $this->orders = \App\Models\Order::where('status',$value)->latest()->get();
                 } else {
                     $this->orders = \App\Models\Order::where('created_by',Auth::user()->id)->where('status',$value)->latest()->get();
                 }*/
-                
             }
         }
     }
     /* get paid informatiion */
-    public function payment($id){
-        $this->order = Order::where('id',$id)->first();
-        $this->customer = Customer::where('id',$this->order->customer_id)->first();
+    public function payment($id)
+    {
+        $this->order = Order::where('id', $id)->first();
+        $this->customer = Customer::where('id', $this->order->customer_id)->first();
         $this->customer_name = $this->customer->name ?? null;
         $this->paymentTypes = PaymentType::where('is_active', 1)->get();
-        $this->paid_amount = Payment::where('order_id',$this->order->id)->sum('received_amount');
-        $this->balance = number_format($this->order->total - $this->paid_amount,2);
+        $this->paid_amount = Payment::where('order_id', $this->order->id)->sum('received_amount');
+        $this->balance = number_format($this->order->total - $this->paid_amount, 2);
     }
-     /* reset input fields */
-    private function resetInputFields(){
+    /* reset input fields */
+    private function resetInputFields()
+    {
         $this->balance = '';
         $this->order = '';
         $this->customer = '';
-        $this->payment_type = "";
+        $this->payment_type = '';
     }
     /* add paymentinformation */
-    public function addPayment() {
+    public function addPayment()
+    {
         /* if balance is < 0 */
-        if($this->balance < 0)
-        {
-            $this->addError('balance','Pls Provide Valid Amount.');
+        if ($this->balance < 0) {
+            $this->addError('balance', 'Pls Provide Valid Amount.');
             return 0;
         }
         /* if the balance is > order total */
-        if($this->balance > $this->order->total)
-        {
-            $this->addError('balance','Paid Amount cannot be greater than total.');
+        if ($this->balance > $this->order->total) {
+            $this->addError('balance', 'Paid Amount cannot be greater than total.');
             return 0;
         }
-        if($this->order->status == 4)
-        {
+        if ($this->order->status == 4) {
             return 0;
         }
         $this->validate([
             'payment_type' => 'required',
         ]);
         /* if any balance */
-        if($this->balance)
-        {
-                Payment::create([
-                'payment_date'  => \Carbon\Carbon::today()->toDateString(),
-                'customer_id'   => $this->customer->id ?? null,
+        if ($this->balance) {
+            Payment::create([
+                'payment_date' => \Carbon\Carbon::today()->toDateString(),
+                'customer_id' => $this->customer->id ?? null,
                 'customer_name' => $this->customer->name ?? null,
-                'order_id'  => $this->order->id,
-                'payment_type'  => $this->payment_type,
-                'payment_note'  => $this->note,
+                'order_id' => $this->order->id,
+                'payment_type' => $this->payment_type,
+                'payment_note' => $this->note,
                 'financial_year_id' => getFinancialYearId(),
-                'received_amount'   => $this->balance,
-                'created_by'    => Auth::user()->id,
+                'received_amount' => $this->balance,
+                'created_by' => Auth::user()->id,
             ]);
             $this->resetInputFields();
             $this->emit('closemodal');
-            $this->dispatchBrowserEvent(
-                'alert', ['type' => 'success',  'message' => 'Payment Updated has been updated!']);
+            $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Payment Updated has been updated!']);
         }
     }
     /* refresh the page */
     public function refresh()
     {
-         /* if search query or order filter is empty */
-        if( $this->search_query == '' && $this->order_filter == '')
-        {
+        /* if search query or order filter is empty */
+        if ($this->search_query == '' && $this->order_filter == '') {
             $this->orders->fresh();
         }
     }
@@ -203,7 +204,7 @@ class ViewOrders extends Component
         $this->orders = new EloquentCollection();
         $this->nextCursor = null;
         $this->hasMorePages = null;
-        if ($this->hasMorePages !== null  && ! $this->hasMorePages) {
+        if ($this->hasMorePages !== null && !$this->hasMorePages) {
             return;
         }
         $orders = $this->filterdata();
@@ -213,77 +214,71 @@ class ViewOrders extends Component
         }
         $this->currentCursor = $orders->cursor();
     }
-    public function delete($id)
+    // In your Livewire component
+    public function confirmDelete($id)
     {
+        // Dispatch confirmation event
+        $this->dispatchBrowserEvent('show-delete-confirmation', ['orderId' => $id]);
+    }
+
+    public function permanentDelete($id)
+    {
+        // Double security check
+        if (!auth()->check() || auth()->user()->user_type != 1) {
+            $this->dispatchBrowserEvent('alert', [
+                'type' => 'error',
+                'message' => 'You do not have permission to delete orders.',
+            ]);
+            return;
+        }
+
         $order = Order::withTrashed()->find($id);
-        
+
         if ($order) {
-            if ($order->trashed()) {
-                $this->dispatchBrowserEvent('alert', [
-                    'type' => 'info',
-                    'message' => "Order {$order->order_number} is already deleted!"
-                ]);
-            } else {
-                $order->delete(); // Perform a soft delete
-                $this->dispatchBrowserEvent('alert', [
-                    'type' => 'success',
-                    'message' => "Order {$order->order_number} for customer {$order->customer_name} has been marked as deleted!"
-                ]);
-                $this->loadOrders(); // Refresh the orders collection excluding soft-deleted records
-            }
+            $order->forceDelete();
+
+            $this->dispatchBrowserEvent('alert', [
+                'type' => 'success',
+                'message' => "Order {$order->order_number} has been permanently deleted!",
+            ]);
+
+            $this->loadOrders(); // Refresh orders
         } else {
             $this->dispatchBrowserEvent('alert', [
                 'type' => 'error',
-                'message' => "Order not found!"
+                'message' => 'Order not found!',
             ]);
         }
     }
-    public function confirmDelete($id)
-    {
-        $this->dispatchBrowserEvent('swal:confirm', [
-            'type' => 'warning',
-            'title' => 'Are you sure?',
-            'text' => 'You won\'t be able to revert this!',
-            'id' => $id,
-        ]);
-    }
     public function filterdata()
     {
-        if($this->search_query || $this->search_query != '')
-        {
-            if($this->order_filter || $this->order_filter != '')
-            {
-                $orders = Order::where('order_number','like','%'.$this->search_query.'%')
-                ->orwhere('customer_name','like','%'.$this->search_query.'%')
-                ->where('status',$this->order_filter)
-                ->latest()
-                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-            
-                return $orders;
-            }
-            else{
-                $orders = Order::where('order_number','like','%'.$this->search_query.'%')
-                ->orwhere('customer_name','like','%'.$this->search_query.'%')
-                ->latest()
-                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                
-                return $orders;
-            }
-        }
-        else{
-            if($this->order_filter || $this->order_filter != '')
-            {
-                $orders = Order::where('status',$this->order_filter)
+        if ($this->search_query || $this->search_query != '') {
+            if ($this->order_filter || $this->order_filter != '') {
+                $orders = Order::where('order_number', 'like', '%' . $this->search_query . '%')
+                    ->orwhere('customer_name', 'like', '%' . $this->search_query . '%')
+                    ->where('status', $this->order_filter)
                     ->latest()
                     ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                
-                
+
+                return $orders;
+            } else {
+                $orders = Order::where('order_number', 'like', '%' . $this->search_query . '%')
+                    ->orwhere('customer_name', 'like', '%' . $this->search_query . '%')
+                    ->latest()
+                    ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
+
                 return $orders;
             }
-            else{
-                $orders = Order::latest()
-                ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
-                                         
+        } else {
+            if ($this->order_filter || $this->order_filter != '') {
+                $orders = Order::where('status', $this->order_filter)
+                    ->latest()
+                    ->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
+
+                return $orders;
+            } else {
+                $orders = Order::latest()->cursorPaginate(10, ['*'], 'cursor', Cursor::fromEncoded($this->nextCursor));
+
                 return $orders;
             }
         }

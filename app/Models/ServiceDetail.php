@@ -11,5 +11,11 @@ class ServiceDetail extends Model
         'service_price'
     ];
 
+    public function class orderDetails()
+    {
+        return $this->belongsTo(OrderDetails::class, 'service_id, service_type_id, service_price,service_name');
+        $this->belongsTo->('orderDetails, service_id, service_type_id)->onDelete('cascade');
+    
+    }
 
 }

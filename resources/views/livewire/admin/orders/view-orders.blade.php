@@ -150,14 +150,22 @@
                                                 {{ $item->user->name ?? '' }}</p>
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.view_single_order', $item->id) }}" type="button"
-                                                class="badge badge-xs badge-primary text-xs fw-600">
-                                                {{ $lang->data['view'] ?? 'View' }}
-                                            </a>
-                                            <a href="" type="button"
-                                                class="badge badge-xs badge-danger text-xs fw-600">
-                                                {{ $lang->data['delete'] ?? 'Delete' }}
-                                            </a>
+                                            <div>
+                                                <a href="{{ route('admin.view_single_order', $item->id) }}"
+                                                    type="button" class="badge badge-xs badge-primary text-xs fw-600">
+                                                    {{ $lang->data['view'] ?? 'View' }}
+                                                </a>
+                                            </div>
+                                            <div>
+                                                @if (auth()->check() && auth()->user()->user_type == 1)
+                                                    <a data-bs-toggle="modal" data-bs-target="#confirmDelete"
+                                                        wire:click="confirmDelete({{ $item->id }})" type="button"
+                                                        class="badge badge-xs badge-danger text-xs fw-600">
+                                                        {{ $lang->data['delete'] ?? 'Delete' }}
+                                                    </a>
+                                                @endif
+                                            </div>
+
                                         </td>
                                     </tr>
                                 @endforeach
@@ -193,96 +201,119 @@
             </div>
         </div>
     </div>
-    <div class="modal fade " id="addpayment" tabindex="-1" role="dialog" aria-labelledby="addpayment"
+    < <div class="modal fade " id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDelete"
         aria-hidden="true" wire:ignore.self>
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h6 class="modal-title fw-600" id="addpayment">
-                        {{ $lang->data['payment_details'] ?? 'Payment Details' }}</h6>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h5 class="modal-title">Are you sure?</h5>
                 </div>
-                <form>
-                    @if ($order)
-                        <div class="modal-body">
-                            <div class="row g-2 align-items-center">
-                                <div class=" col-12">
-                                    <div class="row mb-50 align-items-center">
-                                        <div class="col text-sm fw-500">
-                                            {{ $lang->data['payment_details'] ?? 'Payment Details' }}:</div>
-                                        <div class="col-auto text-sm fw-500">{{ $customer_name }}</div>
-                                    </div>
-                                    <div class="row mb-50 align-items-center">
-                                        <div class="col text-sm fw-500">{{ $lang->data['order_id'] ?? 'Order ID' }}:
-                                        </div>
-                                        <div class="col-auto text-sm fw-500">{{ $order->order_number }}</div>
-                                    </div>
-                                    <div class="row mb-50 align-items-center">
-                                        <div class="col text-sm fw-500">
-                                            {{ $lang->data['order_date'] ?? 'Order Detail' }}:</div>
-                                        <div class="col-auto  text-sm fw-500">
-                                            {{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y') }}</div>
-                                    </div>
-                                    <div class="row mb-50 align-items-center">
-                                        <div class="col text-sm fw-500">
-                                            {{ $lang->data['delivery_date'] ?? 'Delivery Date' }}:</div>
-                                        <div class="col-auto  text-sm fw-500">
-                                            {{ \Carbon\Carbon::parse($order->delivery_date)->format('d/m/Y') }}</div>
-                                    </div>
-                                    <hr>
-                                    <div class="row mb-50 align-items-center">
-                                        <div class="col text-sm fw-500">
-                                            {{ $lang->data['order_amount'] ?? 'Order Amount' }}:</div>
-                                        <div class="col-auto  text-sm fw-500">
-                                            {{ getCurrency() }}{{ number_format($order->total, 3) }}</div>
-                                    </div>
-                                    <div class="row mb-50 align-items-center">
-                                        <div class="col text-sm fw-500">
-                                            {{ $lang->data['paid_amount'] ?? 'Paid Amount' }}:</div>
-                                        <div class="col-auto text-sm fw-500">
-                                            {{ getCurrency() }}{{ number_format($paid_amount, 3) }}</div>
-                                    </div>
-                                    <hr>
-                                    <div class="row align-items-center">
-                                        <div class="col text-sm fw-600">{{ $lang->data['balance'] ?? 'Balance' }}:
-                                        </div>
-                                        <div class="col-auto text-sm fw-600">
-                                            {{ getCurrency() }}{{ number_format($order->total - $paid_amount, 3) }}
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div class="row align-items-center">
-                                        <div class="col-md-6 mb-1">
-                                            <label
-                                                class="form-label">{{ $lang->data['paid_amount'] ?? 'Paid Amount' }}</label>
-                                            <input type="number" class="form-control" placeholder="Enter Amount"
-                                                wire:model="balance">
-                                            @error('balance')
-                                                <span class="error text-danger">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                        <div class="col-md-6 mb-1">
-                                            <label
-                                                class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label>
-                                            <select class="form-select" wire:model="payment_type">
-                                                <@foreach ($paymentTypes as $paymentType)
-                                                    <option class="select-box" value="{{ $paymentType->id }}">
-                                                        {{ $paymentType->name }}</option>
-                    @endforeach
-                    </select>
-                    @error('payment_mode')
-                        <span class="error text-danger">{{ $message }}</span>
-                    @enderror
+                <div class="modal-body">
+                    You want to permanently delete this order? This action cannot be undone.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">{{ $lang->data['cancel'] ?? 'Cancel' }}</button>
+                    <button type="submit" class="btn btn-danger"
+                        wire:click.prevent="permanentDelete({{ $item->id }})">{{ $lang->data['Permanently Delete'] ?? 'Delete' }}</button>
+                </div>
+
+                </button>
             </div>
         </div>
-        <hr>
-        <div class="col-12">
-            <label class="form-label">{{ $lang->data['notes_remarks'] ?? 'Notes / Remarks' }}</label>
-            <textarea class="form-control" placeholder="Enter Notes" wire:model="note"></textarea>
+</div>
+</div>
+
+<div class="modal fade " id="addpayment" tabindex="-1" role="dialog" aria-labelledby="addpayment"
+    aria-hidden="true" wire:ignore.self>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title fw-600" id="addpayment">
+                    {{ $lang->data['payment_details'] ?? 'Payment Details' }}</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form>
+                @if ($order)
+                    <div class="modal-body">
+                        <div class="row g-2 align-items-center">
+                            <div class=" col-12">
+                                <div class="row mb-50 align-items-center">
+                                    <div class="col text-sm fw-500">
+                                        {{ $lang->data['payment_details'] ?? 'Payment Details' }}:</div>
+                                    <div class="col-auto text-sm fw-500">{{ $customer_name }}</div>
+                                </div>
+                                <div class="row mb-50 align-items-center">
+                                    <div class="col text-sm fw-500">{{ $lang->data['order_id'] ?? 'Order ID' }}:
+                                    </div>
+                                    <div class="col-auto text-sm fw-500">{{ $order->order_number }}</div>
+                                </div>
+                                <div class="row mb-50 align-items-center">
+                                    <div class="col text-sm fw-500">
+                                        {{ $lang->data['order_date'] ?? 'Order Detail' }}:</div>
+                                    <div class="col-auto  text-sm fw-500">
+                                        {{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y') }}</div>
+                                </div>
+                                <div class="row mb-50 align-items-center">
+                                    <div class="col text-sm fw-500">
+                                        {{ $lang->data['delivery_date'] ?? 'Delivery Date' }}:</div>
+                                    <div class="col-auto  text-sm fw-500">
+                                        {{ \Carbon\Carbon::parse($order->delivery_date)->format('d/m/Y') }}</div>
+                                </div>
+                                <hr>
+                                <div class="row mb-50 align-items-center">
+                                    <div class="col text-sm fw-500">
+                                        {{ $lang->data['order_amount'] ?? 'Order Amount' }}:</div>
+                                    <div class="col-auto  text-sm fw-500">
+                                        {{ getCurrency() }}{{ number_format($order->total, 3) }}</div>
+                                </div>
+                                <div class="row mb-50 align-items-center">
+                                    <div class="col text-sm fw-500">
+                                        {{ $lang->data['paid_amount'] ?? 'Paid Amount' }}:</div>
+                                    <div class="col-auto text-sm fw-500">
+                                        {{ getCurrency() }}{{ number_format($paid_amount, 3) }}</div>
+                                </div>
+                                <hr>
+                                <div class="row align-items-center">
+                                    <div class="col text-sm fw-600">{{ $lang->data['balance'] ?? 'Balance' }}:
+                                    </div>
+                                    <div class="col-auto text-sm fw-600">
+                                        {{ getCurrency() }}{{ number_format($order->total - $paid_amount, 3) }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 mb-1">
+                                        <label
+                                            class="form-label">{{ $lang->data['paid_amount'] ?? 'Paid Amount' }}</label>
+                                        <input type="number" class="form-control" placeholder="Enter Amount"
+                                            wire:model="balance">
+                                        @error('balance')
+                                            <span class="error text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 mb-1">
+                                        <label
+                                            class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label>
+                                        <select class="form-select" wire:model="payment_type">
+                                            <@foreach ($paymentTypes as $paymentType)
+                                                <option class="select-box" value="{{ $paymentType->id }}">
+                                                    {{ $paymentType->name }}</option>
+                @endforeach
+                </select>
+                @error('payment_mode')
+                    <span class="error text-danger">{{ $message }}</span>
+                @enderror
         </div>
     </div>
+    <hr>
+    <div class="col-12">
+        <label class="form-label">{{ $lang->data['notes_remarks'] ?? 'Notes / Remarks' }}</label>
+        <textarea class="form-control" placeholder="Enter Notes" wire:model="note"></textarea>
+    </div>
+</div>
 </div>
 </div>
 @endif
@@ -297,3 +328,12 @@
 </div>
 </div>
 </div>
+<script>
+    document.addEventListener('livewire:load', function() {
+        Livewire.on('confirmDelete', itemId => {
+            if (confirm('Are you sure you want to delete this order?')) {
+                Livewire.emit('deleteOrder', itemId);
+            }
+        });
+    });
+</script>
