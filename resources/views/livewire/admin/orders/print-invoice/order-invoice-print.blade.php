@@ -836,11 +836,172 @@
                 </div>
 
             </div>
+
+            <!--pagebreak after customer copy -->
+
+            <div style="break-after:page"></div>
+
+            <!--office copy -->
+            <div class="page-wrapper" style="padding:0px; border-top:-10px;">
+                <div class="invoice-card">
+                    <div class="invoice-details" style="border-top:none;">
+                        <div class="invoice-list">
+                            <div class="invoice-title">
+                                <h4 class="heading"style="text-align: right;">
+                                    {{ $lang->data['customer_id'] ?? 'Customer ID' }}:</h4>
+                                <h4 class="heading" style="text-align: right; font-weight: bold; font-size: 24px;">
+                                    {{ str_pad($customer->id ?? '', 4, '0', STR_PAD_LEFT) }}</h4>
+                                <h4 class="heading heading-child"></h4>
+                            </div>
+                            <div class="row-data">
+                                <h5 class="item-info-small">{{ $lang->data['customer_name'] ?? 'Customer Name' }}
+                                    :<br />
+                                    {{ $lang->data['customer_phone'] ?? 'Contact Number' }} :<br />
+                                    {{ $lang->data['customer_address'] ?? 'Address' }} :</h5>
+                                <h5 class="item-info-big">
+                                    {{ $customer->name ?? ($lang->data['walk_in_customer'] ?? 'Walk-In Customer') }}<br />
+                                    {{ $customer->phone ?? '' }}<br />
+                                    {{ $customer->address ?? '' }}<br />
+                                    @if ($customer)
+                                        {{ $lang->data['vat'] ?? 'VAT' }}: {{ $customer->tax_number ?? 'TAX' }}
+                                    @endif
+                                </h5>
+                            </div>
+                            <div class="row-data" style="border:none; margin-bottom: 1px">
+                                <div class="item-info">
+                                    <h5 class="item-title"><b>{{ $lang->data['order_no'] ?? 'Order No' }}</b></h5>
+                                </div>
+                                <h5 class="my-5"><b>{{ $order->order_number }}</b></h5>
+                            </div>
+                            <div class="row-data" style="border:none;">
+                                <div class="item-info">
+                                    <h5 class="item-title"><b>{{ $lang->data['order_date'] ?? 'Order Date' }}</b>
+                                    </h5>
+                                </div>
+                                <h5 class="my-5">
+                                    <b>{{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y') }}</b>
+                                </h5>
+                            </div>
+                            <div class="row-data" style="border:none;">
+                                <div class="item-info">
+                                    <h5 class="item-title">
+                                        <b>{{ $lang->data['delivery_date'] ?? 'Delivery Date' }}</b>
+                                    </h5>
+                                </div>
+                                <h5 class="my-5">
+                                    <b>{{ \Carbon\Carbon::parse($order->delivery_date)->format('d/m/Y') }}</b>
+                                    <b>( {{ getOrderStatus($order->status, 1) }} )</b>
+                                </h5>
+                            </div>
+                            <div class="invoice-title" style="text-align: right">
+                                <h6 class="heading1">{{ $lang->data['service_name'] ?? 'Service Name' }}</h6>
+                                <h6 class="heading1 heading-child">{{ $lang->data['rate'] ?? 'Rate' }}</h6>
+                                <h6 class="heading1 heading-child">{{ $lang->data['qty'] ?? 'QTY' }}</h6>
+                                <h6 class="heading1 heading-child">{{ $lang->data['total'] ?? 'Total' }}</h6>
+                            </div>
+                            @php
+                                $qty = 0;
+                            @endphp
+                            @foreach ($orderdetails as $item)
+                                @php
+                                    $service = \App\Models\Service::where('id', $item->service_id)->first();
+                                @endphp
+                                <div class="row-data"
+                                    style="text-align: center;margin-top: 5px; padding-bottom: 8px; align-items: center">
+                                    <div class="item-info" style="width: 82px;text-align: initial;">
+
+                                        <h5 class="item-title"><b>{{ $service->service_name }}</b></h5>
+                                        <h5 class="item-title"><b>[{{ $item->service_name }}]</b></h5>
+                                    </div>
+                                    {{-- <h5 class="my-5"><b><img src="{{asset('assets/img/service-icons/'.$service->icon)}}" class="avatar avatar-sm me-3 d-flex px-3 py-1" height="25" width="35"></b></h5> --}}
+                                    <h5 class="my-5"><b>{{ getCurrency() }}
+                                            {{ number_format($item->service_price, 3) }}</b></h5>
+                                    <h5 class="my-5"><b>{{ $item->service_quantity }}</b></h5>
+                                    <h5 class="my-5"><b>{{ getCurrency() }}
+                                            {{ number_format($item->service_detail_total, 3) }}</b></h5>
+                                </div>
+                            @endforeach
+                            @php
+                                $addons = \App\Models\OrderAddonDetail::where('order_id', $order->id)->get();
+                            @endphp
+                            @if ($addons)
+                                @if (count($addons) > 0)
+                                    <h4 style="padding-top: 5px;">{{ $lang->data['addons'] ?? 'Addons' }}</h4>
+                                    @foreach ($addons as $row)
+                                        <div class="row-data"
+                                            style="text-align: center;margin-top: 5px; padding-bottom: 8px;">
+                                            <h5 class="my-5" style="   text-align: initial; width: 82px;">
+                                                <b>{{ $row->addon_name }}</b>
+                                            </h5>
+                                            <h5 class="my-5 "><b>-</b></h5>
+                                            <h5 class="my-5"><b>-</b></h5>
+                                            <h5 class="my-5"><b>{{ getCurrency() }}
+                                                    {{ number_format($row->addon_price, 3) }}</b></h5>
+                                        </div>
+                                    @endforeach
+                                @endif
+                            @endif
+                        </div>
+                        <div class="invoice-footer mb-15">
+
+                            <div class="row-data">
+                                <div class="item-info">
+                                    <h5 class="item-title">{{ $lang->data['gross_total'] ?? 'Gross Total' }}:
+                                    </h5>
+                                </div>
+                                <h5 class="my-5">{{ getCurrency() }} {{ number_format($order->total, 3) }}
+                                </h5>
+                            </div>
+                            <div class="row-data">
+                                @php
+                                    $totalPaymentMade = DB::table('payments')
+                                        ->where('order_id', $order->id)
+                                        ->sum('received_amount');
+                                    $balanceAmount = $order->total - $totalPaymentMade;
+                                    $totalQuantity = DB::table('order_details')
+                                        ->where('order_id', $order->id)
+                                        ->sum('service_quantity');
+                                @endphp
+                                <div class="item-info">
+                                    <h5 class="item-title">
+                                        {{ $lang->data['payment_received'] ?? 'Received Amount' }}:
+                                    </h5>
+                                </div>
+                                <h5 class="my-5">{{ getCurrency() }} {{ number_format($totalPaymentMade, 3) }}
+                                </h5>
+                            </div>
+                            <div class="invoice-title" style="justify-content: space-between;">
+                                <div class="item-info" style="width: 50%; align-items:left;">
+                                    <h4 class="heading">{{ $lang->data['quantity'] ?? 'Total Pieces' }}:</h4>
+                                    <h2 class="my-5">{{ $totalQuantity }} {{ $lang->data['pieces'] ?? 'Nos' }}
+                                    </h2>
+                                </div>
+                                <div class="item-info" style="text-align: right;">
+                                    <h4 class="heading">{{ $lang->data['balance_amount'] ?? 'Balance' }}:</h4>
+                                    <h2 class="my-5" style="text-align: right;">{{ getCurrency() }}
+                                        :{{ number_format($balanceAmount, 3) }}</h2>
+                                    <h5 class="heading heading-child" style="width:100%;"></h5>
+
+                                </div>
+                            </div>
+                            <hr>
+                            <p style="text-align: center;"> Office Copy</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+
         </body>
 
         </html>
     @endif
 </div>
+
 <script type="text/javascript">
     "use strict";
     window.onload = function() {
