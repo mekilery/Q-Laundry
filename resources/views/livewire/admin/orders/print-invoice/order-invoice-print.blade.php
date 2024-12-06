@@ -6,9 +6,10 @@
         <!DOCTYPE html
             PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml">
+
         <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-            <title>{{$lang->data['print_invoice'] ?? 'Print Invoice'}}</title>
+            <title>{{ $lang->data['print_invoice'] ?? 'Print Invoice' }}</title>
             <link href="https://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +24,7 @@
                 rel="stylesheet" />
             <link id="pagestyle" href="{{ asset('assets/css/style.css') }}" rel="stylesheet" />
         </head>
+
         <body onload="">
             <div class="row">
                 <div class="col-lg-9">
@@ -139,7 +141,7 @@
                         <div class="card-footer px-4">
                             <div class="row">
                                 <div class="col-4 mb-3">
-                                    <h6 class="mb-2 fw-500">{{$lang->data['addons']??'Addons'}}:</h6>
+                                    <h6 class="mb-2 fw-500">{{ $lang->data['addons'] ?? 'Addons' }}:</h6>
                                     @foreach ($orderaddons as $item)
                                         <p class="text-sm mb-1">{{ $item->addon_name ?? '' }} : <b>
                                                 {{ getCurrency() }}{{ $item->addon_price }} </b></p>
@@ -189,7 +191,7 @@
                                             <div class="col-auto text-sm text-dark fw-600">{{ getCurrency() }}
                                                 {{ number_format($order->total, 3) }}</div>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                                 <hr class="bg-secondary">
@@ -202,7 +204,8 @@
                                 <div class="mt-4 position-relative text-center">
                                     <p
                                         class="text-sm fw-500 mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
-                                        {{$lang->data['powered_by']??'Powered by'}} <a href="{{url('/')}}" class="text-dark fw-600" target="_blank">{{ getApplicationName() }}</a>
+                                        {{ $lang->data['powered_by'] ?? 'Powered by' }} <a href="{{ url('/') }}"
+                                            class="text-dark fw-600" target="_blank">{{ getApplicationName() }}</a>
                                     </p>
                                 </div>
                             </div>
@@ -221,7 +224,7 @@
 
         <head>
             <meta http-equiv="Content-Type" content="image/png"; charset="utf-8" />
-            <title>{{$lang->data['print_invoice'] ?? 'Print Invoice'}}</title>
+            <title>{{ $lang->data['print_invoice'] ?? 'Print Invoice' }}</title>
             <link href="https://fonts.googleapis.com/css?family=Calibri:400,700,400italic,700italic">
             <style>
                 @page {
@@ -242,7 +245,6 @@
                         display: none;
                     }
                 }
-
             </style>
             <style>
                 .mb-0 {
@@ -612,15 +614,16 @@
                 .text-bold {
                     font-weight: bold !important;
                 }
-
             </style>
-            
-    </head>
+
+        </head>
+
         <body>
             <div class="page-wrapper" style="padding:0px; border-top:-10px;">
                 <div class="invoice-card">
                     <div class="invoice-head">
-                        <img src="{{asset(getSiteLogo())}}"style="max-width:150px; height: auto; padding: top -20px;" alt="main_logo">
+                        <img src="{{ asset(getSiteLogo()) }}"style="max-width:150px; height: auto; padding: top -20px;"
+                            alt="main_logo">
                         <p class="my-0">{{ $address }} - {{ $zipcode }}</p>
                         <p class="my-0">{{ $phone }}</p><br>
                         <b>{{ $store_email }}</b>
@@ -628,15 +631,18 @@
                     <div class="invoice-details" style="border-top:none;">
                         <div class="invoice-list">
                             <div class="invoice-title">
-                                <h4 class="heading">{{($lang->data['customer_id'] ?? 'Customer ID')}}:</h4>
-                                <h4 class="heading" style="align: right; font-weight: bold; font-size: 24px;">{{ str_pad($customer->id ?? '', 4, '0', STR_PAD_LEFT)}}</h4>
+                                <h4 class="heading">{{ $lang->data['customer_id'] ?? 'Customer ID' }}:</h4>
+                                <h4 class="heading" style="align: right; font-weight: bold; font-size: 24px;">
+                                    {{ str_pad($customer->id ?? '', 4, '0', STR_PAD_LEFT) }}</h4>
                                 <h4 class="heading heading-child"></h4>
                             </div>
                             <div class="row-data">
-                                <h5 class="item-info-small">{{($lang->data['customer_name'] ?? 'Customer Name')}}   :<br/>
-                                                     {{($lang->data['customer_phone'] ?? 'Contact Number')}} :<br/>
-                                                     {{($lang->data['customer_address'] ?? 'Address')}}      :</h5>
-                                <h5 class="item-info-big">{{ $customer->name ?? ($lang->data['walk_in_customer'] ?? 'Walk-In Customer') }}<br />
+                                <h5 class="item-info-small">{{ $lang->data['customer_name'] ?? 'Customer Name' }}
+                                    :<br />
+                                    {{ $lang->data['customer_phone'] ?? 'Contact Number' }} :<br />
+                                    {{ $lang->data['customer_address'] ?? 'Address' }} :</h5>
+                                <h5 class="item-info-big">
+                                    {{ $customer->name ?? ($lang->data['walk_in_customer'] ?? 'Walk-In Customer') }}<br />
                                     {{ $customer->phone ?? '' }}<br />
                                     {{ $customer->address ?? '' }}<br />
                                     @if ($customer)
@@ -646,20 +652,23 @@
                             </div>
                             <div class="row-data" style="border:none; margin-bottom: 1px">
                                 <div class="item-info">
-                                    <h5 class="item-title"><b>{{$lang->data['order_no']??'Order No'}}</b></h5>
+                                    <h5 class="item-title"><b>{{ $lang->data['order_no'] ?? 'Order No' }}</b></h5>
                                 </div>
                                 <h5 class="my-5"><b>{{ $order->order_number }}</b></h5>
                             </div>
                             <div class="row-data" style="border:none;">
                                 <div class="item-info">
-                                    <h5 class="item-title"><b>{{$lang->data['order_date']??'Order Date'}}</b></h5>
+                                    <h5 class="item-title"><b>{{ $lang->data['order_date'] ?? 'Order Date' }}</b></h5>
                                 </div>
                                 <h5 class="my-5">
-                                    <b>{{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y') }}</b></h5>
+                                    <b>{{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y') }}</b>
+                                </h5>
                             </div>
                             <div class="row-data" style="border:none;">
                                 <div class="item-info">
-                                    <h5 class="item-title"><b>{{$lang->data['delivery_date']??'Delivery Date'}}</b></h5>
+                                    <h5 class="item-title">
+                                        <b>{{ $lang->data['delivery_date'] ?? 'Delivery Date' }}</b>
+                                    </h5>
                                 </div>
                                 <h5 class="my-5">
                                     <b>{{ \Carbon\Carbon::parse($order->delivery_date)->format('d/m/Y') }}</b>
@@ -699,12 +708,13 @@
                             @endphp
                             @if ($addons)
                                 @if (count($addons) > 0)
-                                    <h4 style="padding-top: 5px;">{{$lang->data['addons']??'Addons'}}</h4>
+                                    <h4 style="padding-top: 5px;">{{ $lang->data['addons'] ?? 'Addons' }}</h4>
                                     @foreach ($addons as $row)
                                         <div class="row-data"
                                             style="text-align: center;margin-top: 5px; padding-bottom: 8px;">
                                             <h5 class="my-5" style="   text-align: initial; width: 82px;">
-                                                <b>{{ $row->addon_name }}</b></h5>
+                                                <b>{{ $row->addon_name }}</b>
+                                            </h5>
                                             <h5 class="my-5 "><b>-</b></h5>
                                             <h5 class="my-5"><b>-</b></h5>
                                             <h5 class="my-5"><b>{{ getCurrency() }}
@@ -755,79 +765,87 @@
                             </div>
                             <div class="row-data">
                                 @php
-                                $totalPaymentMade = DB::table('payments')
-                                ->where('order_id', $order->id)
-                                ->sum('received_amount');
-                                $balanceAmount = $order->total - $totalPaymentMade;
-                                $totalQuantity = DB::table('order_details')
-                                ->where('order_id', $order->id)
-                                ->sum('service_quantity');
+                                    $totalPaymentMade = DB::table('payments')
+                                        ->where('order_id', $order->id)
+                                        ->sum('received_amount');
+                                    $balanceAmount = $order->total - $totalPaymentMade;
+                                    $totalQuantity = DB::table('order_details')
+                                        ->where('order_id', $order->id)
+                                        ->sum('service_quantity');
                                 @endphp
                                 <div class="item-info">
-                                    <h5 class="item-title">{{ $lang->data['payment_received'] ?? 'Received Amount' }}:
+                                    <h5 class="item-title">
+                                        {{ $lang->data['payment_received'] ?? 'Received Amount' }}:
                                     </h5>
                                 </div>
                                 <h5 class="my-5">{{ getCurrency() }} {{ number_format($totalPaymentMade, 3) }}
                                 </h5>
                             </div>
-                            <div class="invoice-title" style="width: 100%;">
-                                <div class="item-info"  style="width: 50%; align-items:left;">
+                            <div class="invoice-title" style="justify-content: space-between;">
+                                <div class="item-info" style="width: 50%; align-items:left;">
                                     <h4 class="heading">{{ $lang->data['quantity'] ?? 'Total Pieces' }}:</h4>
-                                    <h2 class="my-5">{{$totalQuantity}} {{ $lang->data['pieces'] ?? 'Nos' }}</h2>
+                                    <h2 class="my-5">{{ $totalQuantity }} {{ $lang->data['pieces'] ?? 'Nos' }}
+                                    </h2>
                                 </div>
-                                <div class="item-info"  style="width: 50%; align-items:right;">
-                                    <h4 class="heading">{{ $lang->data['balance_amount'] ?? 'Amount Payable' }}:</h4>
-                                    <h2 class="my-5" style="justify-items:space-beween;">{{ getCurrency() }} :{{ number_format($balanceAmount, 3) }}</h2>
-                                <h5 class="heading heading-child" style="width:100%;"></h5>
+                                <div class="item-info" style="text-align: right;">
+                                    <h4 class="heading">{{ $lang->data['balance_amount'] ?? 'Balance' }}:</h4>
+                                    <h2 class="my-5" style="text-align: right;">{{ getCurrency() }}
+                                        :{{ number_format($balanceAmount, 3) }}</h2>
+                                    <h5 class="heading heading-child" style="width:100%;"></h5>
                                 </div>
                             </div>
                             <hr>
                         </div>
                     </div>
-                    <div class="qr" style="width:100%; text-align: Center">
-                        <h3 class="my-5">Scan to Pay With - <strong> BENIFIT PAY</strong></h3>
-                        <div class="my-5">
-                        
-                            @php
-                                require_once base_path('phpqrcode/qrlib.php');
-                                $balanceAmount = number_format($balanceAmount, 3);
-                                $iban_no = DB::table('master_settings')->where('master_title', 'iban_number')->value('master_value');
-                                $qrData = json_encode(["iban" => $iban_number, "amount" => $balanceAmount] );
-                                $size = 4;
-                                QRcode::png($qrData, 'qrcode.png', QR_ECLEVEL_L, $size, 1);
-                                $timestamp = time(); // Generate a unique timestamp
-                                echo '<img src="/public/qrcode.png?' . $timestamp . '" style="width: 60%; height: auto;">';;                          
-                            @endphp
-                         </div>
-                            
-                            
-                            
+                    @if ($balanceAmount > 0)
+                        <div class="qr" style="width:100%; text-align: Center">
+                            <h3 class="my-5">Scan to Pay With - <strong> BENIFIT PAY</strong></h3>
+                            <div class="my-5">
 
-                         </div>
-                        <div class="invoice_address">
-                            <div class="text-center">
-                                <h3 class="mt-10">
-                                    {{ isset($site['default_thanks_message']) && !empty($site['default_thanks_message'])? $site['default_thanks_message']: '' }}
-                                </h3>
-                                <p class="b_top">{{$lang->data['powered_by']??'Thank You For Choosing'}} <b>{{ getApplicationName() }}</b></p>
-                                <p>Cashier: {{ auth()->user()->name }}</p>
-
+                                @php
+                                    require_once base_path('phpqrcode/qrlib.php');
+                                    $balanceAmount = number_format($balanceAmount, 3);
+                                    $iban_no = DB::table('master_settings')
+                                        ->where('master_title', 'iban_number')
+                                        ->value('master_value');
+                                    $qrData = json_encode(['iban' => $iban_number, 'amount' => $balanceAmount]);
+                                    $size = 4;
+                                    QRcode::png($qrData, 'qrcode.png', QR_ECLEVEL_L, $size, 1);
+                                    $timestamp = time(); // Generate a unique timestamp
+                                    echo '<img src="/public/qrcode.png?' .
+                                        $timestamp .
+                                        '" style="width: 60%; height: auto;">';
+                                @endphp
                             </div>
                         </div>
+                    @endif
+                    <div class="invoice_address">
+                        <div class="text-center">
+                            </p>
+                            <p>Received By : {{ $order->user->name }}</p>
+
+                            <h3 class="mt-10">
+                                {{ isset($site['default_thanks_message']) && !empty($site['default_thanks_message']) ? $site['default_thanks_message'] : '' }}
+                            </h3>
+                            <p class="b_top">{{ $lang->data['powered_by'] ?? 'Thank You For Choosing' }}
+                                <b>{{ getApplicationName() }}</b>
+
+
+                        </div>
                     </div>
-                    
                 </div>
+
+            </div>
         </body>
 
         </html>
     @endif
 </div>
 <script type="text/javascript">
- "use strict";
-window.onload = function() {
-    if (typeof window.print === 'function') {
-        window.print();
-    }
-};
-
+    "use strict";
+    window.onload = function() {
+        if (typeof window.print === 'function') {
+            window.print();
+        }
+    };
 </script>
