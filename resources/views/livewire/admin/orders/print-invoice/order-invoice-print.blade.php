@@ -238,6 +238,13 @@
                     font-family: Calibri;
                 }
 
+                @media print {
+                    .pagebreak {
+                        clear: both;
+                        page-break-after: always;
+                    }
+                }
+
                 @media screen {
 
                     .header,
@@ -1000,13 +1007,15 @@
 
         </html>
     @endif
+    <div style="break-after:page"></div>
 </div>
 
 <script type="text/javascript">
     "use strict";
-    window.onload = function() {
+    window.print();
+    /**window.onload = function() {
         if (typeof window.print === 'function') {
             window.print();
         }
-    };
+    }; */
 </script>
