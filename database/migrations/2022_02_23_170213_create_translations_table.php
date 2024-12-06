@@ -19,6 +19,7 @@ class CreateTranslationsTable extends Migration
             $table->longtext('data');
             $table->integer('is_active')->nullable();
             $table->integer('default')->nullable();
+            $table->integer('is_rtl')->default(0);
             $table->timestamps();
         });
     }

@@ -177,7 +177,7 @@
                 </div>
                 <form wire:submit.prevent="addItem">
                     <div class="modal-body">
-                        <div class="row g-2 align-items-center" x-data="{ servtypes: @entangle('service_types'), seltype: @entangle('selected_type') }">
+                        <div class="row g-2 align-items-center" x-data="{ servtypes: @entangle('service_types'), seltype: null }">
                             <div class="row row-cols-2 row-cols-md-4 g-2">
                                 <template x-for="item in servtypes">
                                     <div class="col">
@@ -185,7 +185,7 @@
                                             class="btn btn-block w-100 text-center py-3 fs-6 rounded-3"
                                             style="aspect-ratio: 1 / 1;"
                                             :class="seltype === item.id ? 'btn-primary' : 'btn-outline-secondary'"
-                                            @click="seltype = item.id; $wire.addItem()"
+                                            @click="seltype = item.id; $wire.addItem(item.id)"
                                             x-text="item.service_type_name">
                                         </button>
                                     </div>
@@ -197,6 +197,8 @@
                         </div>
                     </div>
                 </form>
+
+
             </div>
         </div>
     </div>

@@ -21804,7 +21804,7 @@ hr.horizontal.gray-light {
 
 .navbar-toggler .navbar-toggler-icon .navbar-toggler-bar.bar2,
 .navbar-toggler .navbar-toggler-icon .navbar-toggler-bar.bar3 {
-    margin-top: 7px
+    margin-top: 5px
 }
 
 .navbar-toggler[aria-expanded=true] .navbar-toggler-bar.bar1 {
@@ -21896,7 +21896,7 @@ hr.horizontal.gray-light {
 .navbar-vertical .navbar-brand-img,
 .navbar-vertical .navbar-brand > img {
     max-width: 100%;
-    max-height: 2rem
+    max-height: 8rem;
 }
 
 .navbar-vertical .navbar-nav .nav-link {
@@ -22672,7 +22672,12 @@ hr.horizontal.gray-light {
 
 .sidenav .navbar-brand,
 .sidenav .navbar-heading {
-    display: block
+    display: flex;
+    flex-direction:column;
+    flex-wrap:nowrap;
+    align-items: center;
+    justify-content: center;
+    height: 50%
 }
 
 @media (min-width:1200px) {
@@ -22681,7 +22686,7 @@ hr.horizontal.gray-light {
     }
 
     .sidenav .sidenav-toggler {
-        padding: 1.5rem
+        padding: 1.5rem 1.5rem
     }
 
     .sidenav.fixed-start + .main-content {
@@ -22694,7 +22699,7 @@ hr.horizontal.gray-light {
 }
 
 .sidenav .navbar-heading .docs-mini {
-    padding-left: 3px
+    padding-left: 
 }
 
 .sidenav .navbar-heading {
@@ -22702,11 +22707,12 @@ hr.horizontal.gray-light {
 }
 
 .sidenav .navbar-brand {
-    padding: 1.5rem 2rem
+    padding: .5rem 0rem
 }
 
 .sidenav-header {
-    height: 4.875rem
+    height: auto;
+    
 }
 
 .sidenav-footer .card.card-background:after {
