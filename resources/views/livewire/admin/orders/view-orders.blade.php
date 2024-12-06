@@ -154,6 +154,10 @@
                                                 class="badge badge-xs badge-primary text-xs fw-600">
                                                 {{ $lang->data['view'] ?? 'View' }}
                                             </a>
+                                            <a href="" type="button"
+                                                class="badge badge-xs badge-danger text-xs fw-600">
+                                                {{ $lang->data['delete'] ?? 'Delete' }}
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
