@@ -137,8 +137,11 @@ class AddOrders extends Component
         $this->calculateTotal();
     }
     /* select services*/
-    public function addItem()
+    /* select services */
+    public function addItem($selectedType)
     {
+        $this->selected_type = $selectedType;
+
         if ($this->service) {
             if ($this->selected_type != '') {
                 $this->add($this->inputi);
@@ -158,6 +161,7 @@ class AddOrders extends Component
             }
         }
     }
+
     /* add the item to array */
     public function add($i)
     {
