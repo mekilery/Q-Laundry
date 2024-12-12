@@ -10,8 +10,11 @@ class PaymentType extends Model
     use HasFactory;
 
     // The attributes that are mass assignable.
-    protected $fillable = [
-        'name', 
-        'is_active'
-    ];
+    protected $fillable = ['name', 'is_active'];
+
+    // In Payment.php model
+    public function PaymentType()
+    {
+        return $this->belongsTo(PaymentType::class, 'payment_type');
+    }
 }

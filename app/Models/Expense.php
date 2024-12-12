@@ -11,9 +11,14 @@ class Expense extends Model
         return $this->belongsTo(\App\Models\ExpenseCategory::class, 'expense_category_id', 'id');
     }
 
-     /* user relation */
-     public function user()
-     {
-         return $this->belongsTo(\App\Models\User::class, 'created_by', 'id');
-     }
+    /* user relation */
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by', 'id');
+    }
+
+    public function paymentType()
+    {
+        return $this->belongsTo(PaymentType::class, 'payment_type', 'id');
+    }
 }

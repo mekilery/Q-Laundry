@@ -35,9 +35,9 @@
                                     <th class="text-center text-uppercase text-secondary text-xs opacity-7">
                                         {{ $lang->data['tax_included'] ?? 'Tax Included' }}?</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7 ps-2">
-                                        {{ $lang->data['payment_mode'] ?? 'Payment Mode' }}</th>
+                                        {{ $lang->data['payment_type'] ?? 'Payment Mode' }}</th>
                                     <th class="text-uppercase text-secondary text-xs opacity-7 ps-2">
-                                            {{ $lang->data['created_by'] ?? 'Created By' }}</th>
+                                        {{ $lang->data['created_by'] ?? 'Created By' }}</th>
                                     <th class="text-secondary opacity-7"></th>
                                 </tr>
                             </thead>
@@ -67,11 +67,11 @@
                                         </td>
                                         <td>
                                             <p class="text-sm mb-0 text-uppercase">
-                                                {{ getpaymentMode($row->payment_mode) }}</p>
+                                                {{ getpaymentMode($row->payment_type) }}</p>
                                         </td>
                                         <td>
                                             <p class="text-sm mb-0 text-uppercase">
-                                                {{ $row->user->name ?? "" }}</p>
+                                                {{ $row->user->name ?? '' }}</p>
                                         </td>
                                         <td>
                                             <a data-bs-toggle="modal" data-bs-target="#editexpense"
@@ -93,8 +93,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" wire:ignore.self id="addexpense" tabindex="-1" role="dialog"
-        aria-labelledby="addexpense" aria-hidden="true">
+    <div class="modal fade" wire:ignore.self id="addexpense" tabindex="-1" role="dialog" aria-labelledby="addexpense"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -144,23 +144,18 @@
                                     <span class="error text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="col-md-12 mb-2">
-                                <label
-                                    class="form-label">{{ $lang->data['payment_mode'] ?? 'Payment Mode' }}</label>
-                                <select class="form-select" wire:model="payment_mode">
-                                    <option value="">{{ $lang->data['choose_payment_mode'] ?? 'Choose Payment Mode' }}
-                                    </option>
-                                    <option class="select-box" value="1">{{ $lang->data['cash'] ?? 'Cash' }}
-                                    </option>
-                                    <option class="select-box" value="2">{{ $lang->data['upi'] ?? 'UPI' }}</option>
-                                    <option class="select-box" value="3">{{ $lang->data['card'] ?? 'Card' }}
-                                    </option>
-                                    <option class="select-box" value="4">{{ $lang->data['cheque'] ?? 'Cheque' }}
-                                    </option>
-                                    <option class="select-box" value="5">
-                                        {{ $lang->data['bank_transfer'] ?? 'Bank Transfer' }}</option>
-                                </select>
-                                @error('payment_mode')
+                            <div class="col-md-12 mb-2"> <label
+                                    class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Type' }}</label>
+                                <select class="form-select" wire:model="payment_type">
+                                    <option value="">
+                                        {{ $lang->data['choose_payment_type'] ?? 'Choose Payment Type' }}</option>
+                                    @foreach ($paymentTypes as $type)
+                                        @if ($type->is_active)
+                                            <option class="select-box" value="{{ $type->id }}">{{ $type->name }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </select> @error('payment_type')
                                     <span class="error text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -195,9 +190,7 @@
                             <div class="col-12 mb-3">
                                 <label for="inputAddress"
                                     class="form-label">{{ $lang->data['notes'] ?? 'Notes' }}</label>
-                                <textarea class="form-control"
-                                    placeholder="{{ $lang->data['enter_notes'] ?? 'Enter Notes' }}"
-                                    wire:model="note"></textarea>
+                                <textarea class="form-control" placeholder="{{ $lang->data['enter_notes'] ?? 'Enter Notes' }}" wire:model="note"></textarea>
                                 @error('note')
                                     <span class="error text-danger">{{ $message }}</span>
                                 @enderror
@@ -266,10 +259,10 @@
                                 @enderror
                             </div>
                             <div class="col-md-12 mb-2">
-                                <label
-                                    class="form-label">{{ $lang->data['payment_mode'] ?? 'Payment Mode' }}</label>
-                                <select class="form-select" wire:model="payment_mode">
-                                    <option value="">{{ $lang->data['choose_payment_mode'] ?? 'Choose Payment Mode' }}
+                                <label class="form-label">{{ $lang->data['payment_type'] ?? 'Payment Mode' }}</label>
+                                <select class="form-select" wire:model="payment_type">
+                                    <option value="">
+                                        {{ $lang->data['choose_payment_type'] ?? 'Choose Payment Mode' }}
                                     </option>
                                     <option class="select-box" value="1">{{ $lang->data['cash'] ?? 'Cash' }}
                                     </option>
@@ -282,7 +275,7 @@
                                     <option class="select-box" value="5">
                                         {{ $lang->data['bank_transfer'] ?? 'Bank Transfer' }}</option>
                                 </select>
-                                @error('payment_mode')
+                                @error('payment_type')
                                     <span class="error text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -317,9 +310,7 @@
                             <div class="col-12 mb-3">
                                 <label for="inputAddress"
                                     class="form-label">{{ $lang->data['note'] ?? 'Note' }}</label>
-                                <textarea class="form-control"
-                                    placeholder="{{ $lang->data['enter_notes'] ?? 'Enter Notes' }}"
-                                    wire:model="note"></textarea>
+                                <textarea class="form-control" placeholder="{{ $lang->data['enter_notes'] ?? 'Enter Notes' }}" wire:model="note"></textarea>
                                 @error('note')
                                     <span class="error text-danger">{{ $message }}</span>
                                 @enderror
