@@ -236,18 +236,10 @@ class AddOrders extends Component
     public function generateOrderID()
     {
         $code_prefix = 'ORD-';
-        $ordernumber = Order::Orderby('id', 'desc')->first();
-        /*if order number is exist*/
-        if ($ordernumber && $ordernumber->order_number != '') {
-            /* if invoice code not empty */
-            $code = explode('-', $ordernumber->order_number);
-            $new_code = $code[1] + 1;
-            $new_code = str_pad($new_code, 4, '0', STR_PAD_LEFT);
-            $this->order_id = $code_prefix . $new_code;
-        } else {
-            /* if order code is empty set start */
-            $this->order_id = $code_prefix . '0001';
-        }
+        $new_id = Order::max('id') + 1; // Get the next order ID
+        $new_code = str_pad($new_id, 4, '0', STR_PAD_LEFT);
+        $this->order_id = $code_prefix . $new_code;
+        $this->order_number = $this->order_id; // Set order number same as order ID
     }
 
     /* calculate service total */
