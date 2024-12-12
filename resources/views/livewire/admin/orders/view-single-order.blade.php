@@ -106,8 +106,9 @@
                                             </div>
                                         </td>
                                         <td class="px-4">
-                                            @if($item->color_code!="")
-                                                <button class="btn" style="background-color: {{$item->color_code}}">
+                                            @if ($item->color_code != '')
+                                                <button class="btn"
+                                                    style="background-color: {{ $item->color_code }}">
                                                 </button>
                                             @endif
                                         </td>
@@ -133,7 +134,8 @@
                     <div class="row">
                         <div class="col-md-8 mb-3">
                             <h6 class="mb-2 fw-500">{{ $lang->data['invoice_to'] ?? 'Invoice To' }}:</h6>
-                            <p class="text-sm mb-0">{{ str_pad($customer->id ?? '0', 4, '0', STR_PAD_LEFT) ?? 'Customer ID' }}</p>
+                            <p class="text-sm mb-0">
+                                {{ str_pad($customer->id ?? '0', 4, '0', STR_PAD_LEFT) ?? 'Customer ID' }}</p>
                             <h6 class="mb-1 fw-500 text-sm">{{ $customer->name ?? 'Walk-In Customer' }}</h6>
                             <p class="text-sm mb-0">{{ $customer->phone ?? 'Phone' }}</p>
                             <p class="text-sm mb-0">{{ $customer->email ?? 'Email' }}</p>
@@ -184,7 +186,8 @@
                         </div>
                         <div class="mt-4 position-relative text-center">
                             <p class="text-sm fw-500 mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
-                                Powered by <a href="{{url('/')}}" class="text-dark fw-600" target="_blank">{{ getApplicationName() }}</a>
+                                Powered by <a href="{{ url('/') }}" class="text-dark fw-600"
+                                    target="_blank">{{ getApplicationName() }}</a>
                             </p>
                         </div>
                     </div>
@@ -233,17 +236,17 @@
                     </div>
                     <div class="row">
                         @if ($balance > 0)
-                            @if($order->status != 4)
-                            <div class="col-12">
-                                <a data-bs-toggle="modal" data-bs-target="#addpayment" type="button"
-                                    class="badge badge-success mb-3 w-100 py-3 fw-600">
-                                    {{ $lang->data['add_payment'] ?? 'Add Payment' }}
-                                </a>
-                            </div>
+                            @if ($order->status != 4)
+                                <div class="col-12">
+                                    <a data-bs-toggle="modal" data-bs-target="#addpayment" type="button"
+                                        class="badge badge-success mb-3 w-100 py-3 fw-600">
+                                        {{ $lang->data['add_payment'] ?? 'Add Payment' }}
+                                    </a>
+                                </div>
                             @endif
                         @else
                             <div class="col-12">
-                                <a type="button" class="badge badge-light disabled mb-3 w-100 py-3 fw-600">
+                                <a type="button" class="badge badge-light disabled mt-3 w-100 py-3 fw-600">
                                     {{ $lang->data['fully_paid'] ?? 'Fully Paid' }}
                                 </a>
                             </div>
@@ -254,12 +257,22 @@
                                 {{ $lang->data['print_invoice'] ?? 'Print Invoice' }}
                             </a>
                         </div>
+                        @if (Auth::user()->user_type == 1)
+                            <div class="col-12">
+                                <button type="button" class="btn btn-icon btn-danger mt-3 py-3 w-100"
+                                    wire:click="deleteOrder({{ $order->id }})">
+                                    {{ $lang->data['delete_order'] ?? 'Delete Order' }}
+                                </button>
+                            </div>
+                        @endif
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal fade " id="image" tabindex="-1" role="dialog" aria-labelledby="image" aria-hidden="true">
+    <div class="modal fade " id="image" tabindex="-1" role="dialog" aria-labelledby="image"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

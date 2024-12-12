@@ -118,4 +118,31 @@ class ViewSingleOrder extends Component
         }
         $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Status Successfully Updated!']);
     }
+    public function deleteOrder($id)
+    {
+        if (Auth::user()->user_type == 1) {
+            $order = Order::find($id);
+
+            if ($order) {
+                $order->delete(); // Perform a soft delete
+                $this->dispatchBrowserEvent('alert', [
+                    'type' => 'success',
+                    'message' => "Order {$order->order_number} for customer {$order->customer_name} has been marked as deleted!",
+                ]);
+
+                // Redirect to the orders page after successful deletion
+                return redirect()->to('/admin/orders');
+            } else {
+                $this->dispatchBrowserEvent('alert', [
+                    'type' => 'error',
+                    'message' => 'Order not found!',
+                ]);
+            }
+        } else {
+            $this->dispatchBrowserEvent('alert', [
+                'type' => 'error',
+                'message' => 'You do not have permission to delete orders!',
+            ]);
+        }
+    }
 }
