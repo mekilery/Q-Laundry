@@ -236,8 +236,15 @@ class AddOrders extends Component
     public function generateOrderID()
     {
         $code_prefix = 'ORD-';
-        $new_id = Order::max('id') + 1; // Get the next order ID
-        $new_code = str_pad($new_id, 4, '0', STR_PAD_LEFT);
+        $last_order = Order::withTrashed()->orderBy('id', 'desc')->first(); // Get the last order including soft-deleted ones
+
+        if ($last_order) {
+            $new_id = $last_order->id + 1; // Increment the last order ID by 1
+        } else {
+            $new_id = 1; // Start with 1 if no orders exist
+        }
+
+        $new_code = str_pad($new_id, 4, '0', STR_PAD_LEFT); // Pad the new ID with leading zeros to ensure it is 4 digits long
         $this->order_id = $code_prefix . $new_code;
         $this->order_number = $this->order_id; // Set order number same as order ID
     }
