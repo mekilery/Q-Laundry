@@ -19,4 +19,8 @@ class Order extends Model
     {
         return $this->belongsTo(Customer::class, 'addon_total', 'id');
     }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'order_id', 'id');
+    }
 }

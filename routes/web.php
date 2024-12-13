@@ -59,6 +59,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['store', 'installed']], func
     /* reports section */
     Route::group(['prefix' => 'reports/', 'middleware' => 'admin'], function () {
         Route::get('daily', \App\Http\Livewire\Admin\Reports\DailyReport::class)->name('admin.daily_report');
+        Route::get('customer', \App\Http\Livewire\Admin\Reports\CustomerReport::class)->name('admin.customer_report');
         Route::get('expense', \App\Http\Livewire\Admin\Reports\ExpenseReport::class)->name('admin.expense_report');
         Route::get('order', \App\Http\Livewire\Admin\Reports\OrderReport::class)->name('admin.order_report');
         Route::get('sales', \App\Http\Livewire\Admin\Reports\SalesReport::class)->name('admin.sales_report');

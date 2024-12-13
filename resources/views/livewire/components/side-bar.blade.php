@@ -152,6 +152,14 @@
                                 </a>
                             </li>
                             <li class="nav-item ">
+                                <a class="nav-link {{ Request::is('admin/reports/customer') ? 'active' : '' }}"
+                                    href="{{ route('admin.customer_report') }}">
+                                    <span class="sidenav-mini-icon side-bar-inner"> O </span>
+                                    <span class="sidenav-normal side-bar-inner">
+                                        {{ $lang->data['customer_report'] ?? 'Customer Report' }} </span>
+                                </a>
+                            </li>
+                            <li class="nav-item ">
                                 <a class="nav-link {{ Request::is('admin/reports/order') ? 'active' : '' }}"
                                     href="{{ route('admin.order_report') }}">
                                     <span class="sidenav-mini-icon side-bar-inner"> O </span>
