@@ -4,7 +4,7 @@ namespace App\Http\Livewire\Admin\Reports;
 use Livewire\Component;
 use PDF;
 use App\Models\Translation;
-use App\models\Customer;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\FinancialYear;
