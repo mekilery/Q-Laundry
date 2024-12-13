@@ -35,11 +35,11 @@
                     <table class="table table-bordered align-items-center mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th style="width: 15%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['date'] ?? 'Date'}}</th>
-                                <th style="width: 15%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['order_id'] ?? 'Order ID'}}</th>
-                                <th style="width: 30%" class="text-uppercase text-secondary text-xs  opacity-7">{{$lang->data['customer'] ?? 'Customer'}}</th>
-                                <th style="width: 20%" class="text-uppercase text-secondary text-xs  opacity-7">{{$lang->data['order_amount'] ?? 'Order Amount'}}</th>
-                                <th style="width: 20%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['status'] ?? 'Status'}}</th>
+                                <th style="width: 15%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['date'] ?? 'Date'}}</th>
+                                <th style="width: 15%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['order_id'] ?? 'Order ID'}}</th>
+                                <th style="width: 30%" class="text-uppercase text-secondary text-sm  opacity-7">{{$lang->data['customer'] ?? 'Customer'}}</th>
+                                <th style="width: 20%" class="text-uppercase text-secondary text-sm  opacity-7">{{$lang->data['order_amount'] ?? 'Order Amount'}}</th>
+                                <th style="width: 20%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['status'] ?? 'Status'}}</th>
                             </tr>
                         </thead>
                     </table>
@@ -50,20 +50,20 @@
                             @foreach($orders as $row)
                             <tr>
                                 <td style="width: 15%" >
-                                    <p class="text-xs px-3 mb-0">
+                                    <p class="text-sm px-3 mb-0">
                                         {{\Carbon\Carbon::parse($row->order_date)->format('d/m/Y')}}
                                     </p>
                                 </td>
                                 <td style="width: 15%" >
-                                    <p class="text-xs px-3 mb-0">
+                                    <p class="text-sm px-3 mb-0">
                                         <span class="font-weight-bold">{{$row->order_number}}</span>
                                     </p>
                                 </td>
                                 <td style="width: 30%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{$row->customer_name ?? ""}}</p>
+                                    <p class="text-sm px-3 font-weight-bold mb-0">{{$row->customer_name ?? ""}}</p>
                                 </td>
                                 <td style="width: 21.3%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{getCurrency()}}{{number_format($row->total,2)}}</p>
+                                    <p class="text-sm px-3 font-weight-bold mb-0">{{getCurrency()}} {{number_format($row->total,3)}}</p>
                                 </td>
                                 <td style="width: 20%" >
                                     <a type="button" class="badge badge-sm bg-secondary text-uppercase">{{getOrderStatus($row->status)}}</a>
@@ -80,7 +80,7 @@
                     </div>
                     <div class="col">
                         <span class="text-sm mb-0 fw-500">{{$lang->data['total_order_amount'] ?? 'Total Order Amount'}}:</span>
-                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}}{{number_format($orders->sum('total'),2)}}</span>
+                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}} {{number_format($orders->sum('total'),3)}}</span>
                     </div>
                     <div class="col-auto">
                         <button type="button" wire:click="downloadFile()" class="btn btn-success me-2 mb-0">{{$lang->data['download_report'] ?? 'Download Report'}}</button>

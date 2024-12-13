@@ -53,7 +53,7 @@
                                     </p>
                                 </td>
                                 <td style="width: 20%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{getCurrency()}}{{number_format($row->expense_amount,2)}}</p>
+                                    <p class="text-xs px-3 font-weight-bold mb-0">{{getCurrency()}} {{number_format($row->expense_amount,3)}}</p>
                                 </td>
                                 <td style="width: 15%" >
                                     <p class="text-xs px-3 font-weight-bold mb-0">{{$row->tax_percentage}}</p>
@@ -64,7 +64,7 @@
                                                 $tax_amount = $row->expense_amount * ($row->tax_percentage/100); 
                                                 $tax_amount_total +=$tax_amount;
                                             @endphp
-                                            {{getCurrency()}}{{number_format($tax_amount,2)}}
+                                            {{getCurrency()}} {{number_format($tax_amount,3)}}
                                     </p>
                                 </td>
                                 <td style="width: 15%" >
@@ -82,11 +82,11 @@
                     </div>
                     <div class="col">
                         <span class="text-sm mb-0 fw-500">{{$lang->data['total_expense_amount'] ?? 'Total Expense Amount'}}:</span>
-                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}}{{number_format($expenses->sum('expense_amount'),2)}}</span>
+                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}} {{number_format($expenses->sum('expense_amount'),3)}}</span>
                     </div>
                     <div class="col">
                         <span class="text-sm mb-0 fw-500">{{$lang->data['total_tax_amount'] ?? 'Total Tax Amount'}}:</span>
-                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}}{{number_format($tax_amount_total,2)}}</span>
+                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}} {{number_format($tax_amount_total,3)}}</span>
                     </div>
                     <div class="col-auto">
                         <button type="button" class="btn btn-success me-2 mb-0" wire:click="downloadFile()">{{$lang->data['download_report'] ?? 'Download Report'}}</button>

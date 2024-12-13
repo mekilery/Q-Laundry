@@ -24,14 +24,14 @@
                     <table class="table table-bordered align-items-center mb-0">
                         <thead class="bg-light">
                             <tr>
-                                <th style="width: 10%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['date'] ?? 'Date'}}</th>
-                                <th style="width: 10%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['order'] ?? 'Order'}} #</th>
-                                <th style="width: 20%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['customer'] ?? 'Customer'}}</th>
-                                <th style="width: 14%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['sub_total'] ?? 'Sub Total'}}</th>
-                                <th style="width: 14%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['addon_total'] ?? 'Addon Total'}}</th>
-                                <th style="width: 14%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['discount'] ?? 'Discount'}}</th>
-                                <th style="width: 14%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['tax_amount'] ?? 'Tax Amount'}}</th>
-                                <th style="width: 15%" class="text-uppercase text-secondary text-xs opacity-7">{{$lang->data['gross_total'] ?? 'Gross Total'}}</th>
+                                <th style="width: 10%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['date'] ?? 'Date'}}</th>
+                                <th style="width: 10%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['order'] ?? 'Order'}} #</th>
+                                <th style="width: 20%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['customer'] ?? 'Customer'}}</th>
+                                <th style="width: 14%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['sub_total'] ?? 'Sub Total'}}</th>
+                                <th style="width: 14%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['addon_total'] ?? 'Addon Total'}}</th>
+                                <th style="width: 14%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['discount'] ?? 'Discount'}}</th>
+                                <th style="width: 14%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['tax_amount'] ?? 'Tax Amount'}}</th>
+                                <th style="width: 15%" class="text-uppercase text-secondary text-sm opacity-7">{{$lang->data['gross_total'] ?? 'Gross Total'}}</th>
                             </tr>
                         </thead>
                     </table>
@@ -42,32 +42,32 @@
                             @foreach($orders as $row)
                             <tr>
                                 <td style="width: 10%" >
-                                    <p class="text-xs px-3  mb-0">
+                                    <p class="text-sm px-3  mb-0">
                                         {{\Carbon\Carbon::parse($row->order_date)->format('d/m/Y')}}
                                     </p>
                                 </td>
                                 <td style="width: 10%" >
-                                    <p class="text-xs px-3 mb-0">
+                                    <p class="text-sm px-3 mb-0">
                                         <span class="font-weight-bold">{{$row->order_number}}</span>
                                     </p>
                                 </td>
                                 <td style="width: 20%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{$row->customer_name}}</p>
+                                    <p class="text-sm px-3 font-weight-bold mb-0">{{$row->customer_name}}</p>
                                 </td>
                                 <td style="width: 14%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{getCurrency()}}{{number_format($row->sub_total,2)}}</p>
+                                    <p class="text-sm px-3 font-weight-bold mb-0">{{getCurrency()}} {{number_format($row->sub_total,3)}}</p>
                                 </td>
                                 <td style="width: 14%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{getCurrency()}}{{number_format($row->addon_total,2)}}</p>
+                                    <p class="text-sm px-3 font-weight-bold mb-0">{{getCurrency()}} {{number_format($row->addon_total,3)}}</p>
                                 </td>
                                 <td style="width: 14%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{getCurrency()}}{{number_format($row->discount,2)}}</p>
+                                    <p class="text-sm px-3 font-weight-bold mb-0">{{getCurrency()}} {{number_format($row->discount,3)}}</p>
                                 </td>
                                 <td style="width: 14%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{getCurrency()}}{{number_format($row->tax_amount,2)}}</p>
+                                    <p class="text-sm px-3 font-weight-bold mb-0">{{getCurrency()}} {{number_format($row->tax_amount,3)}}</p>
                                 </td>
                                 <td style="width: 15%" >
-                                    <p class="text-xs px-3 font-weight-bold mb-0">{{getCurrency()}}{{number_format($row->total,2)}}</p>
+                                    <p class="text-sm px-3 font-weight-bold mb-0">{{getCurrency()}} {{number_format($row->total,3)}}</p>
                                 </td>
                             </tr>
                             @endforeach
@@ -81,11 +81,11 @@
                     </div>
                     <div class="col">
                         <span class="text-sm mb-0 fw-500">{{$lang->data['total_sales'] ?? 'Total Sales'}}:</span>
-                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}}{{number_format($orders->sum('total'),2)}}</span>
+                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}} {{number_format($orders->sum('total'),3)}}</span>
                     </div>
                     <div class="col">
                         <span class="text-sm mb-0 fw-500">{{$lang->data['total_tax_amount'] ?? 'Total Tax Amount'}}:</span>
-                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}}{{number_format($orders->sum('tax_amount'),2)}}</span>
+                        <span class="text-sm text-dark ms-2 fw-600 mb-0">{{getCurrency()}} {{number_format($orders->sum('tax_amount'),3)}}</span>
                     </div>
                     <div class="col-auto">
                         <button type="button" wire:click="downloadFile()" class="btn btn-success me-2 mb-0">{{$lang->data['download_report'] ?? 'Download Report'}}</button>

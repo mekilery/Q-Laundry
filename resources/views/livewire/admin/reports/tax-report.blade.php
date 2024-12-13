@@ -103,22 +103,22 @@
                                     <p class="text-xs px-3 font-weight-bold mb-0">
                                         {{-- sales --}}
                                         @if($category ==1 )
-                                        {{getCurrency()}} {{number_format($row->total-$tax_amount_sales,2)}}
+                                        {{getCurrency()}} {{number_format($row->total-$tax_amount_sales,3)}}
                                      @endif
                                      {{-- expense --}}
                                      @if($category == 2) 
-                                     {{getCurrency()}}{{number_format($row->expense_amount-$tax_amount_expense,2)}}
+                                     {{getCurrency()}} {{number_format($row->expense_amount-$tax_amount_expense,3)}}
                                      @endif
                                 </td>
                                 <td style="width: 20%" >
                                     <p class="text-xs px-3 font-weight-bold mb-0">
                                         {{-- sales --}}
                                         @if($category ==1 )
-                                        {{getCurrency()}} {{number_format($tax_amount_sales,2)}}
+                                        {{getCurrency()}} {{number_format($tax_amount_sales,3)}}
                                      @endif
                                      {{-- expense --}}
                                      @if($category == 2) 
-                                     {{getCurrency()}} {{number_format($tax_amount_expense,2)}}
+                                     {{getCurrency()}} {{number_format($tax_amount_expense,3)}}
                                      @endif
                                     </p>
                                 </td>
@@ -126,11 +126,11 @@
                                     <p class="text-xs px-3 font-weight-bold mb-0">
                                         {{-- sales --}}
                                         @if($category ==1 )
-                                        {{getCurrency()}}{{number_format($row->total,2)}}
+                                        {{getCurrency()}}{{number_format($row->total,3)}}
                                      @endif
                                      {{-- expense --}}
                                      @if($category == 2) 
-                                     {{getCurrency()}}{{number_format($row->expense_amount,2)}}
+                                     {{getCurrency()}}{{number_format($row->expense_amount,3)}}
                                      @endif
                                     </p>
                                 </td>
@@ -145,11 +145,11 @@
                         <span class="text-sm text-dark ms-2 fw-600 mb-0">
                             {{-- sales --}}
                          @if($category ==1 )
-                            {{getCurrency()}}{{number_format($reports->sum('total'),2)}}
+                            {{getCurrency()}} {{number_format($reports->sum('total'),3)}}
                          @endif
                          {{-- expense --}}
                          @if($category == 2) 
-                         {{getCurrency()}}{{number_format($reports->sum('expense_amount'),2)}}
+                         {{getCurrency()}} {{number_format($reports->sum('expense_amount'),3)}}
                          @endif
                         </span>
                     </div>
@@ -158,11 +158,11 @@
                         <span class="text-sm text-dark ms-2 fw-600 mb-0">
                             {{-- sales --}}
                         @if($category ==1 )
-                        {{getCurrency()}} {{number_format($tax_amount_total_sales,2)}}
+                        {{getCurrency()}} {{number_format($tax_amount_total_sales,3)}}
                          @endif
                          {{-- expense --}}
                          @if($category == 2) 
-                         {{getCurrency()}} {{number_format($tax_amount_total_expense,2)}}
+                         {{getCurrency()}} {{number_format($tax_amount_total_expense,3)}}
                          @endif
                         </span>
                     </div>
