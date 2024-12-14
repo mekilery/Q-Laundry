@@ -154,9 +154,12 @@
                                                 class="badge badge-xs badge-primary text-xs fw-600">
                                                 {{ $lang->data['view'] ?? 'View' }}
                                             </a>
+                                         @if (Auth::user()->user_type == 1)
                                             <a href="#" type="button" wire:click="delete({{ $item->id }})"
                                                 class="ms-2 badge badge-xs badge-danger text-xs fw-600">
                                                 {{ $lang->data['delete'] ?? 'Delete' }}
+                                                </a>
+                                         @endif
                                         </td>
                                     </tr>
                                 @endforeach
