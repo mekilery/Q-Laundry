@@ -23,6 +23,7 @@ class CreateOrderDetailsTable extends Migration
             $table->double('service_price',15,3)->nullable();
             $table->string('service_quantity')->nullable();
             $table->double('service_detail_total',15,3)->nullable();
+            $table->text('color_code')->nullable();
             $table->timestamps();
         });
     }
