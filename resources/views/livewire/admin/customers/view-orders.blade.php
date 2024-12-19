@@ -23,12 +23,40 @@
                             <p class="text-sm mb-0 text-uppercase">
                                 {{ $lang->data['tax'] ?? 'VAT' }}:{{ $tax_number }}</p>
                         </div>
-                        <div class="col-auto">
-                            <h5 class="text-dark text-uppercase fw-500">
-                                {{ $this->customer->name }}-{{ $this->customer->id }}</h5>
-                            <p class="text-dark text-uppercase fw-500">{{ $this->customer->address }}</p>
-                            <p class="text-dark text-uppercase fw-500">{{ $this->customer->phone }}</p>
-
+                        <div class="col-auto text-end mt-4">
+                            <h5 class="text-dark text-uppercase fw-500">CUST ID:
+                                #{{ str_pad($this->customer->id, 4, '0', STR_PAD_LEFT) }}</h5>
+                            <p class="text-dark fw-500">Cust Name : {{ $this->customer->name }}</p>
+                            <div class="d-flex justify-content-between mb-1">
+                                <label class="me-2">{{ $lang->data['from_date'] ?? 'From Date :' }}</label>
+                                <input type="date" class="form-control form-control-sm" wire:model="from_date"
+                                    style="height: 30px; width: 150px;">
+                            </div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <label class="me-2">{{ $lang->data['to_date'] ?? 'To Date     :' }}</label>
+                                <input type="date" class="form-control form-control-sm" wire:model="to_date"
+                                    value="{{ now()->format('Y-m-d') }}" style="height: 30px; width: 150px;">
+                            </div>
+                            <div class="d-flex justify-content-between mb-1 align-items-center">
+                                <label class="me-2">{{ $lang->data['status'] ?? 'Status    :' }}</label>
+                                <select class="form-select form-control-sm py-1" wire:model="status"
+                                    style="height: 30px; width: 150px; font-size: 12px;">
+                                    <option class="select-box" value="-1">
+                                        {{ $lang->data['all_orders'] ?? 'All Orders' }}</option>
+                                    <option class="select-box" value="0">{{ $lang->data['pending'] ?? 'Pending' }}
+                                    </option>
+                                    <option class="select-box" value="1">
+                                        {{ $lang->data['processing'] ?? 'Processing' }}</option>
+                                    <option class="select-box" value="2">
+                                        {{ $lang->data['ready_to_deliver'] ?? 'Ready To Deliver' }}</option>
+                                    <option class="select-box" value="3">
+                                        {{ $lang->data['delivered'] ?? 'Delivered' }}
+                                    </option>
+                                    <option class="select-box" value="4">
+                                        {{ $lang->data['returned'] ?? 'Returned' }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

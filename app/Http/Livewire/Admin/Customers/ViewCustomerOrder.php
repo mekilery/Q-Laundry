@@ -6,15 +6,19 @@ use App\Models\Customer;
 use App\Models\Translation;
 use App\Models\MasterSettings;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use App\Models\FinancialYear;
+use Carbon\Carbon;
 
 class ViewCustomerOrder extends Component
 {
-    public $order, $orderdetails, $orderaddons, $lang, $balance, $total, $customer, $payments, $sitename, $address, $phone, $paid_amount, $payment_type, $zipcode, $tax_number, $store_email;
+    public $order, $from_date, $to_date, $defaultDate, $orderaddons, $lang, $balance, $total, $customer, $payments, $sitename, $address, $phone, $paid_amount, $payment_type, $zipcode, $tax_number, $store_email;
 
     public function mount($id)
     {
         $this->customer = Customer::findOrFail($id);
         $this->orders = $this->customer->orders()->whereNull('deleted_at')->get(); // Exclude soft-deleted orders
+        $this->from_date = \Carbon\Carbon::today()->toDateString();
+        $this->to_date = \Carbon\Carbon::today()->toDateString();
         $settings = new MasterSettings();
         $site = $settings->siteData();
         if (isset($site['default_application_name'])) {
@@ -55,6 +59,19 @@ class ViewCustomerOrder extends Component
         } else {
             $this->lang = Translation::where('default', 1)->first();
         }
+    }
+    public function DateSelection()
+    {
+        // Get the financial year based on the financial_year_id
+        $financialYear = FinancialYear::find(1); // Replace 1 with the actual financial_year_id
+        if ($financialYear) {
+            $financialYearStart = Carbon::parse($financialYear->starting_date);
+        } else {
+            // Default to the current year's April 1st if financial year not found
+            $currentYear = Carbon::now()->year;
+            $financialYearStart = Carbon::create($currentYear, 4, 1);
+        }
+        $this->defaultDate = $financialYearStart->toDateString();
     }
 
     public function render()
