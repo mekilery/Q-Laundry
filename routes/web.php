@@ -2,6 +2,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstallController;
 use App\Http\Livewire\Admin\Settings\PaymentTypesSettings;
+use App\Http\Controllers\Customers;
 
 /* login */
 Route::group(['middleware' => ['installed']], function () {
@@ -32,6 +33,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['store', 'installed']], func
     });
     /* customers */
     Route::get('customers', \App\Http\Livewire\Admin\Customers\Customers::class)->name('admin.customers');
+    Route::get('customers/{id}/orders', \App\Http\Livewire\Admin\Customers\ViewCustomerOrder::class)->name('admin.customers.orders');
     /* orders */
     Route::group(['prefix' => 'orders/'], function () {
         Route::get('/', \App\Http\Livewire\Admin\Orders\ViewOrders::class)->name('admin.view_orders');
@@ -39,6 +41,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['store', 'installed']], func
         Route::get('view/{id}', \App\Http\Livewire\Admin\Orders\ViewSingleOrder::class)->name('admin.view_single_order');
         Route::get('print-order/{id}', \App\Http\Livewire\Admin\Orders\PrintInvoice\OrderInvoicePrint::class);
     });
+    Route::get('/admin/orders/{order}', [OrderController::class, 'show'])->name('admin.orders.show');
     Route::get('pos', \App\Http\Livewire\Admin\Orders\AddOrders::class)->name('admin.pos');
     //Order Status
     Route::get('order-status', \App\Http\Livewire\Admin\Orders\OrderStatusScreen::class)->name('admin.status_screen_order');

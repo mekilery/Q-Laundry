@@ -40,7 +40,8 @@
                                 @foreach ($customers as $row)
                                     <tr>
                                         <td>
-                                            <p class="text-sm px-3 mb-0">{{ str_pad($row->id, 4, '0', STR_PAD_LEFT) }}</p>
+                                            <p class="text-sm px-3 mb-0">{{ str_pad($row->id, 4, '0', STR_PAD_LEFT) }}
+                                            </p>
                                         </td>
                                         <td>
                                             <p class="text-sm font-weight-bold mb-0">{{ $row->name }}</p>
@@ -53,6 +54,10 @@
                                             <p class="text-sm mb-0">{{ $row->address }}</p>
                                         </td>
                                         <td>
+                                            <a href="{{ route('admin.customers.orders', $row->id) }}"
+                                                class="btn btn-sm btn-info">
+                                                View Orders
+                                            </a>
                                             <a data-bs-toggle="modal" data-bs-target="#editcustomer"
                                                 wire:click="edit({{ $row->id }})" type="button"
                                                 class="badge badge-xs badge-warning fw-600 text-xs">
@@ -62,11 +67,11 @@
                                     </tr>
                                 @endforeach
                             </tbody>
+
                         </table>
-                        @if($hasMorePages)
-                        <div
-                            x-data="{
-                                init () {
+                        @if ($hasMorePages)
+                            <div x-data="{
+                                init() {
                                     let observer = new IntersectionObserver((entries) => {
                                         entries.forEach(entry => {
                                             if (entry.isIntersecting) {
@@ -80,15 +85,14 @@
                                     observer.observe(this.$el);
                                 }
                             }"
-                            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-4"
-                        >
-                           <div class="text-center pb-2 d-flex justify-content-center align-items-center">
-                               Loading...
-                               <div class="spinner-grow d-inline-flex mx-2 text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                              </div>
+                                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-4">
+                                <div class="text-center pb-2 d-flex justify-content-center align-items-center">
+                                    Loading...
+                                    <div class="spinner-grow d-inline-flex mx-2 text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
                         @endif
                     </div>
                 </div>
@@ -148,8 +152,7 @@
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">{{ $lang->data['address'] ?? 'Address' }}</label>
-                                <textarea type="text" class="form-control"
-                                    placeholder="{{ $lang->data['enter_address'] ?? 'Enter Address' }}"
+                                <textarea type="text" class="form-control" placeholder="{{ $lang->data['enter_address'] ?? 'Enter Address' }}"
                                     wire:model="address"></textarea>
                                 @error('address')
                                     <span class="error text-danger">{{ $message }}</span>
@@ -212,7 +215,8 @@
                             <div class="col-md-12 mb-1">
                                 <label class="form-label">{{ $lang->data['email'] ?? 'Email' }}</label>
                                 <input type="text" class="form-control"
-                                    placeholder="{{ $lang->data['enter_email'] ?? 'Enter Email' }}" wire:model="email">
+                                    placeholder="{{ $lang->data['enter_email'] ?? 'Enter Email' }}"
+                                    wire:model="email">
                                 @error('email')
                                     <span class="error text-danger">{{ $message }}</span>
                                 @enderror
@@ -228,8 +232,7 @@
                             </div>
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">{{ $lang->data['address'] ?? 'Address' }}</label>
-                                <textarea type="text" class="form-control"
-                                    placeholder="{{ $lang->data['enter_address'] ?? 'Enter Address' }}"
+                                <textarea type="text" class="form-control" placeholder="{{ $lang->data['enter_address'] ?? 'Enter Address' }}"
                                     wire:model="address"></textarea>
                                 @error('address')
                                     <span class="error text-danger">{{ $message }}</span>
