@@ -12,7 +12,7 @@
     </div>
     <div class="row">
         <div class="col-10">
-            <div class="card mb-4">
+            <div class="card mb-0">
                 <div class="card-header p-4">
                     <div class="row align-items-center">
                         <div class="col">
@@ -61,42 +61,79 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Order Number</th>
-                            <th>Order Date</th>
-                            <th>Delivery Date</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($orders as $order)
+            <div class="card card-body p-0">
+                <div class="table-responsive">
+                    <table class="table align-items-center mb-0">
+                        <thead class="bg-light">
                             <tr>
-                                <td>{{ $order->order_number }}</td>
-                                <td>{{ $order->order_date }}</td>
-                                <td>{{ $order->delivery_date }}</td>
-                                <td>{{ $order->total }}</td>
-                                <td>{{ $order->status }}</td>
-                                <td>
-                                    <a href="{{ route('admin.view_single_order', $order->id) }}" type="button"
-                                        class="badge badge-xs badge-primary fw-600 text-xs">View</a>
-                                </td>
+                                <th class="text-uppercase text-secondary text-xs opacity-7">Order Date</th>
+                                <th class="text-uppercase text-secondary text-xs opacity-7">Order Number</th>
+                                <th class="text-uppercase text-secondary text-xs opacity-7">Status</th>
+                                <th class="text-uppercase text-secondary text-xs opacity-7">Delivery Date</th>
+                                <th class="text-uppercase text-secondary text-xs opacity-7">Total</th>
+                                <th class="text-uppercase text-secondary text-xs opacity-7">Paid</th>
+                                <th class="text-uppercase text-secondary text-xs opacity-7">Balance</th>
+                                <th class="text-uppercase text-secondary text-xs opacity-7">Actions</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="">
+                            @foreach ($orders as $order)
+                                <tr>
+                                    <td>
+                                        <p class="text-sm px-3 mb-0">
+                                            {{ \Carbon\Carbon::parse($order->order_date)->format('d-m-y') }}
+                                        </p>
+                                    </td>
+
+                                    <td>
+                                        <p class="text-sm px-3 mb-0">
+                                            {{ $order->order_number }}
+                                        </p>
+                                    </td>
+
+                                    <td>
+                                        <p class="text-sm px-3 mb-0">
+                                            {{ $order->status }}
+
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p class="text-sm px-3 mb-0">
+                                            {{ \Carbon\Carbon::parse($order->delivery_date)->format('d-m-y') }}
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p class="text-sm px-3 mb-0">
+                                            {{ number_format($order->total, 3) }}
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p class="text-sm px-3 mb-0">
+                                            {{ number_format($order->total_paid, 3) }}
+                                        </p>
+                                    </td>
+                                    <td>
+                                        <p class="text-sm px-3 mb-0">
+                                            {{ number_format($order->balance, 3) }}
+                                        </p>
+                                    </td>
+
+
+                                    <td>
+                                        <a href="{{ route('admin.view_single_order', $order->id) }}" type="button"
+                                            class="badge badge-xs badge-primary fw-600 text-xs">View</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+        <div class="col-2">
+
+
+
+        </div>
     </div>
-    <div class="col-2">
-
-
-
-    </div>
-</div>
-</div>
 </div>
