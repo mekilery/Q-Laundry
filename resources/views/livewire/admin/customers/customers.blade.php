@@ -54,8 +54,8 @@
                                             <p class="text-sm mb-0">{{ $row->address }}</p>
                                         </td>
                                         <td>
-                                            <a href="{{ route('admin.customers.orders', $row->id) }}"
-                                                class="btn btn-sm btn-info">
+                                            <a href="{{ route('admin.customers.orders', $row->id) }}" type="button"
+                                                class="badge badge-xs badge-primary fw-600 text-xs">
                                                 View Orders
                                             </a>
                                             <a data-bs-toggle="modal" data-bs-target="#editcustomer"
