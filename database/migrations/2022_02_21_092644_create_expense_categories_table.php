@@ -17,6 +17,7 @@ class CreateExpenseCategoriesTable extends Migration
             $table->id();
             $table->string('expense_category_name');
             $table->integer('expense_category_type');
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
         });
     }

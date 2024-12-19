@@ -265,6 +265,15 @@
                                 </a>
                             </li>
                             <li class="nav-item ">
+                                <a class="nav-link {{ Request::is('admin.settings.whatsapp') ? 'active' : '' }}"
+                                    href="{{ route('admin.settings.whatsapp') }}">
+                                    <span class="sidenav-mini-icon side-bar-inner"> W </span>
+                                    <span
+                                        class="sidenav-normal side-bar-inner">{{ $lang->data['whatsapp_settings'] ?? 'Whatsapp Settings' }}
+                                    </span>
+                                </a>
+                            </li>
+                            <li class="nav-item ">
                                 <a class="nav-link  {{ Request::is('admin/settings/staff') ? 'active' : '' }}"
                                     href="{{ route('admin.staff') }}">
                                     <span class="sidenav-mini-icon side-bar-inner"> S </span>

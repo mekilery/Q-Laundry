@@ -3,6 +3,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InstallController;
 use App\Http\Livewire\Admin\Settings\PaymentTypesSettings;
 use App\Http\Controllers\Customers;
+use App\Http\Livewire\Admin\Settings\WhatsappSettings;
 
 /* login */
 Route::group(['middleware' => ['installed']], function () {
@@ -58,6 +59,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['store', 'installed']], func
         Route::get('sms', \App\Http\Livewire\Admin\Settings\SMSSettings::class)->name('admin.sms');
         Route::get('staff', \App\Http\Livewire\Admin\Staff\Staff::class)->name('admin.staff');
         Route::get('payment-types-settings', PaymentTypesSettings::class)->name('admin.payment_types_settings');
+        Route::get('whatsapp', WhatsappSettings::class)->name('admin.settings.whatsapp');
     });
     /* reports section */
     Route::group(['prefix' => 'reports/', 'middleware' => 'admin'], function () {

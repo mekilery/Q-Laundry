@@ -1,16 +1,16 @@
 <div>
     <div class="row align-items-center justify-content-between mb-4">
         <div class="col">
-            <h5 class="fw-500 text-white">{{ $lang->data['sms_settings'] ?? 'SMS Settings' }}</h5>
+            <h5 class="fw-500 text-white">{{ $lang->data['whatsapp_settings'] ?? 'WhatsApp Settings' }}</h5>
         </div>
     </div>
     <div class="row" x-data="initz()" x-init="start()">
         <div class="col-12">
             <div class="card">
                 <div class="card-body p-3">
-                    <form class="row g-3 align-items-center">
+                    <form class="row g-3 align-items-center" wire:submit.prevent="save">
                         <div><span
-                                class="text-sm text-uppercase">{{ $lang->data['twilio_sms_settings'] ?? 'Twilio SMS Settings' }}</span>
+                                class="text-sm text-uppercase">{{ $lang->data['twilio_whatsapp_settings'] ?? 'Twilio WhatsApp Settings' }}</span>
                         </div>
                         <hr>
                         <div class="col-md-4">
@@ -30,10 +30,10 @@
                             @enderror
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">{{ $lang->data['twilio_number'] ?? 'Twilio Number' }}<span
+                            <label class="form-label">{{ $lang->data['whatsapp_number'] ?? 'WhatsApp Number' }}<span
                                     class="text-danger">*</span></label>
-                            <input type="text" required autofocus class="form-control" wire:model="twilio_number">
-                            @error('twilio_number')
+                            <input type="text" required autofocus class="form-control" wire:model="whatsapp_number">
+                            @error('whatsapp_number')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -42,18 +42,18 @@
                                 <input class="form-check-input" type="checkbox" id="employee" checked
                                     wire:model="enabled">
                                 <label class="form-check-label"
-                                    for="employee">{{ $lang->data['sms_enabled'] ?? 'SMS Enabled' }}</label>
+                                    for="employee">{{ $lang->data['Whatsapp_enabled'] ?? 'Whatsapp Enabled' }}</label>
                             </div>
                         </div>
                         <div class="mt-5"><span
-                                class="text-sm text-uppercase ">{{ $lang->data['SMS Format'] ?? 'SMS Format' }}</span>
+                                class="text-sm text-uppercase ">{{ $lang->data['Whatsapp Format'] ?? 'Whatsapp Format' }}</span>
                         </div>
                         <hr>
                         <div class="row mt-2 mb-2">
                             <div class="col-12 col-md-12 col-lg-8 col-sm-12">
                                 <label for="">{{ $lang->data['create_order'] ?? 'Create Order' }}</label>
                                 <textarea name="text" class="form-control" id="" cols="30" x-ref="create" rows="12"
-                                    x-model="myCreateSMS"> </textarea>
+                                    x-model="myCreateWhatsapp"> </textarea>
                             </div>
                             <div class="mt-4 col-12 col-lg-4 col-md-12">
                                 <div class="row">
@@ -91,7 +91,6 @@
                             </div>
                         </div>
                     </form>
-
                 </div>
             </div>
         </div>

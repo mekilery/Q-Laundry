@@ -13,9 +13,7 @@ class AddCreatedByInExpenses extends Migration
      */
     public function up()
     {
-        Schema::table('expenses', function (Blueprint $table) {
-            $table->unsignedBigInteger('created_by')->nullable();
-        });
+        Schema::table('expenses', function (Blueprint $table) {});
     }
 
     /**
