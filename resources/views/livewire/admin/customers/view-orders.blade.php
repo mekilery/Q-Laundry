@@ -2,7 +2,7 @@
     <div class="row align-items-center justify-content-between mb-4">
         <div class="col">
 
-            <h5 class="fw-500 text-white">{{ $lang->data['orders_of'] ?? 'Orders of' }} {{ $customer->name }}</h5>
+            <h5 class="fw-500 text-white">{{ $lang->data['orders_of'] ?? 'Orders of' }} {{ $customer->name ?? '' }}</h5>
         </div>
         <div class="col-auto">
             <a href="{{ route('admin.customers') }}" class="btn btn-icon btn-3 btn-white text-primary mb-0">
@@ -16,17 +16,17 @@
                 <div class="card-header p-4">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h4 class="text-uppercase fw-500">{{ $sitename }}</h4>
-                            <p class="text-sm mb-0">{{ $store_email }}</p>
-                            <p class="text-sm mb-3">{{ $address }} - {{ $zipcode }}</p>
-                            <p class="text-sm mb-0">Phone: {{ $phone }}</p>
+                            <h4 class="text-uppercase fw-500">{{ $sitename ?? '' }}</h4>
+                            <p class="text-sm mb-0">{{ $store_email ?? '' }}</p>
+                            <p class="text-sm mb-3">{{ $address ?? '' }} - {{ $zipcode ?? '' }}</p>
+                            <p class="text-sm mb-0">Phone: {{ $phone ?? '' }}</p>
                             <p class="text-sm mb-0 text-uppercase">
-                                {{ $lang->data['tax'] ?? 'VAT' }}:{{ $tax_number }}</p>
+                                {{ $lang->data['tax'] ?? 'VAT' }}:{{ $tax_number ?? '' }}</p>
                         </div>
                         <div class="col-auto text-end mt-4">
                             <h5 class="text-dark text-uppercase fw-500">CUST ID:
-                                #{{ str_pad($this->customer->id, 4, '0', STR_PAD_LEFT) }}</h5>
-                            <p class="text-dark fw-500">Cust Name : {{ $this->customer->name }}</p>
+                                #{{ str_pad($this->customer->id ?? '', 4, '0', STR_PAD_LEFT) }}</h5>
+                            <p class="text-dark fw-500">Cust Name : {{ $this->customer->name ?? '' }}</p>
                             <div class="d-flex justify-content-between mb-1">
                                 <label class="me-2">{{ $lang->data['from_date'] ?? 'From Date :' }}</label>
                                 <input type="date" class="form-control form-control-sm" wire:model="from_date"
@@ -109,12 +109,12 @@
                                     </td>
                                     <td>
                                         <p class="text-sm px-3 mb-0">
-                                            {{ number_format($order->total_paid, 3) }}
+                                            {{ number_format($order->payments->sum('total_paid'), 3) }}
                                         </p>
                                     </td>
                                     <td>
                                         <p class="text-sm px-3 mb-0">
-                                            {{ number_format($order->balance, 3) }}
+                                            {{ number_format($order->total - $order->payments->sum('total_paid'), 3) }}
                                         </p>
                                     </td>
 

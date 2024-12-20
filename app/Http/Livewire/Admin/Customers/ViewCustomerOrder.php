@@ -5,18 +5,39 @@ use Livewire\Component;
 use App\Models\Customer;
 use App\Models\Translation;
 use App\Models\MasterSettings;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use App\Models\Payment;
+use Illuminate\Support\Facades\DB;
 use App\Models\FinancialYear;
 use Carbon\Carbon;
 
 class ViewCustomerOrder extends Component
 {
-    public $order, $from_date, $to_date, $defaultDate, $orderaddons, $lang, $balance, $total, $customer, $payments, $sitename, $address, $phone, $paid_amount, $payment_type, $zipcode, $tax_number, $store_email;
+    public $order,
+        $from_date,
+        $to_date,
+        $defaultDate,
+        $orderaddons,
+        $lang,
+        $balance,
+        $total,
+        $customer,
+        $payments,
+        $sitename,
+        $address,
+        $phone,
+        $paid_amount,
+        $payment_type,
+        $zipcode,
+        $tax_number,
+        $store_email,
+        $status = -1,
+        $orders = [];
 
     public function mount($id)
     {
         $this->customer = Customer::findOrFail($id);
         $this->orders = $this->customer->orders()->whereNull('deleted_at')->get(); // Exclude soft-deleted orders
+        $this->order = $this->orders->first(); // Initialize the order property
         $this->from_date = \Carbon\Carbon::today()->toDateString();
         $this->to_date = \Carbon\Carbon::today()->toDateString();
         $settings = new MasterSettings();
@@ -51,8 +72,8 @@ class ViewCustomerOrder extends Component
             $store_email = $site['store_email'] && $site['store_email'] != '' ? $site['store_email'] : 'store@store.com';
             $this->store_email = $store_email;
         }
-        //$this->balance = $this->order->total - Payment::where('order_id', $this->order->id)->sum('received_amount');
-        //$this->paid_amount = $this->balance;
+        $this->balance = $this->order->total - Payment::where('order_id', $this->order->id)->sum('received_amount');
+        $this->paid_amount = $this->balance;
         if (session()->has('selected_language')) {
             /* session has selected language */
             $this->lang = Translation::where('id', session()->get('selected_language'))->first();
@@ -73,9 +94,51 @@ class ViewCustomerOrder extends Component
         }
         $this->defaultDate = $financialYearStart->toDateString();
     }
+    public function report()
+    {
+        $query = \App\Models\Order::query()
+            ->whereDate('order_date', '>=', $this->from_date)
+            ->whereDate('order_date', '<=', $this->to_date);
+
+        if ($this->status != -1) {
+            $query->where('status', $this->status);
+        }
+
+        if ($this->customer) {
+            $query->where('customer_id', $this->customer->id);
+        }
+
+        $this->orders = $query
+            ->with([
+                'payments' => function ($query) {
+                    $query->select('order_id', \DB::raw('SUM(received_amount) as total_paid'))->groupBy('order_id');
+                },
+            ])
+            ->latest()
+            ->get();
+
+        $this->totalOrderAmount = $this->orders->sum('total');
+        $this->totalPaidAmount = $this->orders->sum(function ($order) {
+            return $order->payments->sum('total_paid');
+        });
+        $this->totalBalanceAmount = $this->totalOrderAmount - $this->totalPaidAmount;
+    }
+    public function updated($name, $value)
+    {
+        /* if the updated value is from_date or to_date */
+        if ($name == 'from_date' || $name == 'to_date') {
+            $this->report();
+        }
+
+        /* if the updated value is status */
+        if ($name == 'status') {
+            $this->report();
+        }
+    }
 
     public function render()
     {
+        $this->report(); // Ensure the report method is called to load orders initially
         return view('livewire.admin.customers.view-orders', [
             'customer' => $this->customer,
             'orders' => $this->orders,
