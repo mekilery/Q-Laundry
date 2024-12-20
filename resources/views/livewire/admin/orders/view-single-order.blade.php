@@ -246,7 +246,7 @@
                             @endif
                         @else
                             <div class="col-12">
-                                <a type="button" class="badge badge-light disabled mt-3 w-100 py-3 fw-600">
+                                <a type="button" class="badge badge-light disabled mb-3 w-100 py-3 fw-600">
                                     {{ $lang->data['fully_paid'] ?? 'Fully Paid' }}
                                 </a>
                             </div>
