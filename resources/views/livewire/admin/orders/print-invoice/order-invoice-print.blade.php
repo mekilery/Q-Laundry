@@ -25,7 +25,7 @@
             <link id="pagestyle" href="{{ asset('assets/css/style.css') }}" rel="stylesheet" />
         </head>
 
-        <body onload="">
+        <body onload="printAndClose();">
             <div class="row">
                 <div class="col-lg-9">
                     <div class="card mb-4">
@@ -625,7 +625,7 @@
 
         </head>
 
-        <body>
+        <body onload="printAndClose();">
             <div class="page-wrapper" style="padding:0px; border-top:-10px;">
                 <div class="invoice-card">
                     <div class="invoice-head">
@@ -1012,10 +1012,11 @@
 
 <script type="text/javascript">
     "use strict";
-    window.print();
-    /**window.onload = function() {
-        if (typeof window.print === 'function') {
-            window.print();
-        }
-    }; */
+
+    function printAndClose() {
+        window.print();
+        setTimeout(function() {
+            window.close();
+        }, 1000); // Adjust the delay as needed
+    }
 </script>
