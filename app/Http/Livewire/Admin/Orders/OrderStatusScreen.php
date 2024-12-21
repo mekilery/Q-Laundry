@@ -11,16 +11,9 @@ class OrderStatusScreen extends Component
     public function render()
     {
         
-        if(Auth::user()->user_type==1)
-        {
         $this->pending_orders = Order::where('status',0)->latest()->get();
         $this->processing_orders = Order::where('status',1)->latest()->get();
         $this->ready_orders = Order::where('status',2)->latest()->get();
-        } else {
-            $this->pending_orders = Order::where('created_by',Auth::user()->id)->where('status',0)->latest()->get();
-            $this->processing_orders = Order::where('created_by',Auth::user()->id)->where('status',1)->latest()->get();
-            $this->ready_orders = Order::where('created_by',Auth::user()->id)->where('status',2)->latest()->get();
-        }
         return view('livewire.admin.orders.order-status-screen');
     }
     /* process before render */
@@ -35,17 +28,10 @@ class OrderStatusScreen extends Component
             $this->lang = Translation::where('default',1)->first();
         }
          
-        if(Auth::user()->user_type==1)
-        {
         $this->pending_orders = Order::where('status',0)->latest()->get();
         $this->processing_orders = Order::where('status',1)->latest()->get();
         $this->ready_orders = Order::where('status',2)->latest()->get();
-        } else {
-            $this->pending_orders = Order::where('created_by',Auth::user()->id)->where('status',0)->latest()->get();
-            $this->processing_orders = Order::where('created_by',Auth::user()->id)->where('status',1)->latest()->get();
-            $this->ready_orders = Order::where('created_by',Auth::user()->id)->where('status',2)->latest()->get();
         }
-    }
     /* change the order status */
     public function changestatus($order,$status)
     {

@@ -634,6 +634,8 @@
                         <p class="my-0">{{ $address }} - {{ $zipcode }}</p>
                         <p class="my-0">{{ $store_email }}</p><br>
                         <b style="font-size: 18px;">PH : {{ $phone }}</b>
+
+                        
                     </div>
                     <div class="invoice-details" style="border-top:none; margin-bottom: 3px;">
                         <div class="invoice-list">
