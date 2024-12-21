@@ -453,8 +453,8 @@
 
                 .item-info-small {
                     width: 40%;
-                    margin-top: 5px;
-                    margin-bottom: 5px;
+                    margin-top: 3px;
+                    margin-bottom: 3px;
                 }
 
                 .item-info-big {
@@ -632,36 +632,38 @@
                         <img src="{{ asset(getSiteLogo()) }}"style="max-width:150px; height: auto; padding: top -20px;"
                             alt="main_logo">
                         <p class="my-0">{{ $address }} - {{ $zipcode }}</p>
-                        <p class="my-0">{{ $phone }}</p><br>
-                        <b>{{ $store_email }}</b>
+                        <p class="my-0">{{ $store_email }}</p><br>
+                        <b style="font-size: 18px;">PH : {{ $phone }}</b>
                     </div>
-                    <div class="invoice-details" style="border-top:none;">
+                    <div class="invoice-details" style="border-top:none; margin-bottom: 3px;">
                         <div class="invoice-list">
-                            <div class="invoice-title">
-                                <h4 class="heading">{{ $lang->data['customer_id'] ?? 'Customer ID' }}:</h4>
-                                <h4 class="heading" style="align: right; font-weight: bold; font-size: 24px;">
-                                    {{ str_pad($customer->id ?? '', 4, '0', STR_PAD_LEFT) }}</h4>
+                            <div class="invoice-title" style="justify-content: space-between; align-items: center;">
+                                <h4 class="heading" style="flex: 1; text-align: left;">{{ $lang->data['customer_id'] ?? 'Customer ID' }}    :</h4>
+                                <h4 class="heading" style="text-align: right; font-weight: bold; font-size: 24px;">
+                                    #{{ str_pad($customer->id ?? '', 4, '0', STR_PAD_LEFT) }}</h4>
                                 <h4 class="heading heading-child"></h4>
                             </div>
                             <div class="row-data">
-                                <h5 class="item-info-small">{{ $lang->data['customer_name'] ?? 'Customer Name' }}
-                                    :<br />
-                                    {{ $lang->data['customer_phone'] ?? 'Contact Number' }} :<br />
-                                    {{ $lang->data['customer_address'] ?? 'Address' }} :</h5>
-                                <h5 class="item-info-big">
+                                <h5 class="item-info">{{ $lang->data['customer_name'] ?? 'Customer Name' }}
+                                    <br />
+                                    {{ $lang->data['customer_phone'] ?? 'Contact Number' }} <br />
+                                    {{ $lang->data['customer_address'] ?? 'Address' }} </h5>
+                                <h5 class="item-info">:</br>
+                                    :</br>
+                                    :</h5>
+                                <h5 class="item-info">
                                     {{ $customer->name ?? ($lang->data['walk_in_customer'] ?? 'Walk-In Customer') }}<br />
                                     {{ $customer->phone ?? '' }}<br />
                                     {{ $customer->address ?? '' }}<br />
-                                    @if ($customer)
-                                        {{ $lang->data['vat'] ?? 'VAT' }}: {{ $customer->tax_number ?? 'TAX' }}
+                                    @if ($customer && $customer->tax_number)
+                                        {{ $lang->data['vat'] ?? 'VAT' }}: {{ $customer->tax_number }}
                                     @endif
                                 </h5>
                             </div>
-                            <div class="row-data" style="border:none; margin-bottom: 1px">
-                                <div class="item-info">
-                                    <h5 class="item-title"><b>{{ $lang->data['order_no'] ?? 'Order No' }}</b></h5>
+                            <div class="row-data" style="border:none; margin-bottom: 10px; text-align: center; margin-top: 10px;">
+                                <div class="" style="width: 100%;">
+                                    <h1 class="item-title" style="border-top: none;"><b>{{ $lang->data['order_no'] ?? 'ORDER NO' }}   : {{ $order->order_number }}</b></h1>
                                 </div>
-                                <h5 class="my-5"><b>{{ $order->order_number }}</b></h5>
                             </div>
                             <div class="row-data" style="border:none;">
                                 <div class="item-info">
@@ -682,11 +684,19 @@
                                     <b>( {{ getOrderStatus($order->status, 1) }} )</b>
                                 </h5>
                             </div>
-                            <div class="invoice-title" style="text-align: right">
-                                <h6 class="heading1">{{ $lang->data['service_name'] ?? 'Service Name' }}</h6>
-                                <h6 class="heading1 heading-child">{{ $lang->data['rate'] ?? 'Rate' }}</h6>
-                                <h6 class="heading1 heading-child">{{ $lang->data['qty'] ?? 'QTY' }}</h6>
-                                <h6 class="heading1 heading-child">{{ $lang->data['total'] ?? 'Total' }}</h6>
+                            <div class="invoice-title" style="justify-content: space-between; align-items: center;">
+                                <div class="item-info" style="width: 60%; text-align: left;">
+                                    <h6 class="heading1">{{ $lang->data['service_name'] ?? 'Service Name' }}</h6>
+                                </div>
+                                <div class="item-info" style="width: 17%; text-align: center;">
+                                    <h6 class="heading1">{{ $lang->data['rate'] ?? 'Rate' }}</h6>
+                                </div>
+                                <div class="item-info" style="width: 6%; text-align: center;">
+                                    <h6 class="heading1">{{ $lang->data['qty'] ?? 'QTY' }}</h6>
+                                </div>
+                                <div class="item-info" style="width: 17%; text-align: right;">
+                                    <h6 class="heading1">{{ $lang->data['total'] ?? 'Total' }}</h6>
+                                </div>
                             </div>
                             @php
                                 $qty = 0;
@@ -696,13 +706,12 @@
                                     $service = \App\Models\Service::where('id', $item->service_id)->first();
                                 @endphp
                                 <div class="row-data"
-                                    style="text-align: center;margin-top: 5px; padding-bottom: 5px; align-items: center">
-                                    <div class="item-info" style="width: 82px;text-align: initial;">
+                                    style="text-align: center;margin-top: 3px; padding-bottom: 3px; align-items: center">
+                                    <div class="item-info" style="width: 170px;text-align: initial;">
                                         <h5 class="item-title">
                                             <b>{{ $service->service_name }}:</b>[{{ $item->service_name }}]
                                         </h5>
                                     </div>
-                                    {{-- <h5 class="my-5"><b><img src="{{asset('assets/img/service-icons/'.$service->icon)}}" class="avatar avatar-sm me-3 d-flex px-3 py-1" height="25" width="35"></b></h5> --}}
                                     <h5 class="my-5"><b>
                                             {{ number_format($item->service_price, 3) }}</b></h5>
                                     <h5 class="my-5"><b>{{ $item->service_quantity }}</b></h5>
