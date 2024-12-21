@@ -111,6 +111,15 @@ class ViewSingleOrder extends Component
     {
         $this->order->status = $status;
 
+        // Update the relevant date columns based on the status
+        if ($status == 1) { // Assuming 1 is for processed
+            $this->order->processed_on = now();
+        } elseif ($status == 2) { // Assuming 2 is for returned
+            $this->order->returned_on = now();
+        } elseif ($status == 3) { // Assuming 3 is for delivered
+            $this->order->delivered_on = now();
+        }
+
         $this->order->save();
         $message = sendOrderStatusChangeSMS($this->order->id, $status);
         if ($message) {

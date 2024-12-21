@@ -27,15 +27,27 @@
                                 <span> {{ $lang->data['order_id'] ?? 'Order ID' }}:</span>
                                 <span class="ms-2 fw-600">#{{ $order->order_number }}</span>
                             </h6>
-                            <p class="text-sm mb-1">
+                            <p class="text-sm mb-1 d-flex justify-content-between">
                                 <span> {{ $lang->data['order_date'] ?? 'Order Date' }}:</span>
                                 <span
                                     class="fw-600 ms-2">{{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y') }}</span>
                             </p>
                             <p class="text-sm mb-3">
-                                <span> {{ $lang->data['delivery_date'] ?? 'Delivery Date' }}:</span>
-                                <span
-                                    class="fw-600 ms-2">{{ \Carbon\Carbon::parse($order->delivery_date)->format('d/m/Y') }}</span>
+                                <span class="d-flex justify-content-between">
+                                    @if ($order->status == 2)
+                                        <span>{{ $lang->data['ready_from'] ?? 'Ready From' }}:</span>
+                                        <span class="fw-600 ms-2">{{ \Carbon\Carbon::parse($order->processed_on)->format('d/m/Y') }}</span>
+                                    @elseif ($order->status == 3)
+                                        <span>{{ $lang->data['delivered_on'] ?? 'Delivered On' }}:</span>
+                                        <span class="fw-600 ms-2">{{ \Carbon\Carbon::parse($order->delivered_on)->format('d/m/Y') }}</span>
+                                    @elseif ($order->status == 4)
+                                        <span>{{ $lang->data['returned_on'] ?? 'Returned On' }}:</span>
+                                        <span class="fw-600 ms-2">{{ \Carbon\Carbon::parse($order->returned_on)->format('d/m/Y') }}</span>
+                                    @else
+                                        <span>{{ $lang->data['to_be_delivered_on'] ?? 'To Be Delivered On' }}:</span>
+                                        <span class="fw-600 ms-2">{{ \Carbon\Carbon::parse($order->delivery_date)->format('d/m/Y') }}</span>
+                                    @endif
+                                </span>
                             </p>
                             <div class="d-flex align-items-center">
                                 <div><span class="text-sm">
@@ -215,57 +227,111 @@
                             </ul>
                         @endif
                     @endif
-                    <h6 class="mb-3 fw-500 mt-2">{{ $lang->data['payments'] ?? 'Payments' }}</h6>
-                    <div class="timeline timeline-one-side">
-                        @foreach ($payments as $item)
-                            <div class="timeline-block mb-3">
-                                <span class="timeline-step">
-                                    <i class="fa fa-dot-circle-o text-secondary"></i>
-                                </span>
-                                <div class="timeline-content">
-                                    <h6 class="text-dark text-sm font-weight-bold mb-0">{{ getCurrency() }}
-                                        {{ number_format($item->received_amount, 3) }}</h6>
-                                    <p class="text-secondary text-xs mt-1 mb-0">
-                                        <span>{{ Carbon\Carbon::parse($item->payment_date)->format('d/m/Y') }}</span>
-                                        <span
-                                            class="ms-2 fw-600 text-uppercase">[{{ getpaymentMode($item->payment_type) }}]</span>
-                                    </p>
-                                </div>
+                    <h6 class="mb-3 fw-500 mt-2">{{ $lang->data['order_timeline'] ?? 'Order Time-line' }}</h6>
+                    <div>
+                       
+                    
+                        
+                            @php
+                                $timeline = collect();
+
+                                $timeline->push([
+                                    'date' => \Carbon\Carbon::parse($order->order_date)->format('d-m-y H:i:s'),
+                                    'event' => $lang->data['order_placed'] ?? 'Order Placed',
+                                ]);
+                                // Add processed event to timeline if not null
+                                if (!is_null($order->processed_on)) {
+                                    $timeline->push([
+                                        'date' => \Carbon\Carbon::parse($order->processed_on)->format('d-m-y H:i:s'),
+                                        'event' => $lang->data['processed_on'] ?? 'Order Ready',
+                                    ]);
+                                }
+                                // Add delivered event to timeline if not null
+                                if (!is_null($order->delivered_on)) {
+                                    $timeline->push([
+                                        'date' => \Carbon\Carbon::parse($order->delivered_on)->format('d-m-y H:i:s'),
+                                        'event' => $lang->data['delivered_on'] ?? 'Order Delivered',
+                                    ]);
+                                }
+                                // Add delivered event to timeline if not null
+                                if (!is_null($order->returned_on)) {
+                                    $timeline->push([
+                                        'date' => \Carbon\Carbon::parse($order->returned_on)->format('d-m-y H:i:s'),
+                                        'event' => $lang->data['returned_on'] ?? 'Order Returned',
+                                    ]);
+                                }
+                                // Add delivered event to timeline if not null
+                                if (is_null($order->delivered_on) && is_null($order->returned_on)) {
+                                    $timeline->push([
+                                        'date' => \Carbon\Carbon::parse($order->delivery_date)->format('d-m-y H:i:s'),
+                                        'event' => $lang->data['delivery_date'] ?? 'Expected Deliverey',
+                                    ]);
+                                }
+
+                                // Add payments to timeline
+                                foreach ($payments as $payment) {
+                                    $timeline->push([
+                                        'date' => \Carbon\Carbon::parse($payment->payment_date)->format('d-m-y H:i:s'),
+                                        'event' => $lang->data['payment_received'] ?? 'Received as ',
+                                        'amount' => $payment->received_amount,
+                                        'type' => getpaymentMode($payment->payment_type)
+                                    ]);
+                                }
+
+                                // Sort timeline by date
+                                $timeline = $timeline->sortBy('date');
+                            @endphp
+
+                            <div class="timeline timeline-one-side" >
+                                @foreach ($timeline as $item)
+                                    <div class="timeline-block mb-3">
+                                        <span class="timeline-step"style="overflow: hidden;">
+                                            <i class="fa fa-dot-circle-o text-secondary"></i>
+                                        </span>
+                                        <div class="timeline-content">
+                                            
+                                                <span class="text-secondary text-sm font-weight-bold mb-0">{{ \Carbon\Carbon::parse($item['date'])->format('y-m-d') }} </span></br>
+                                                <span class="text-dark text-sm font-weight-bold mb-0"> {{ $item['event'] }}
+                                                @isset($item['amount'])
+                                                    : {{ $item['type'] }} {{ getCurrency() }} {{ number_format($item['amount'], 3) }} 
+                                                @endisset</span>
+                                            
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
-                        @endforeach
-                    </div>
-                    <div class="row">
-                        @if ($balance > 0)
-                            @if ($order->status != 4)
+                            @if ($balance > 0)
+                                @if ($order->status != 4)
+                                    <div class="col-12">
+                                        <a data-bs-toggle="modal" data-bs-target="#addpayment" type="button"
+                                            class="badge badge-success mb-3 w-100 py-3 fw-600">
+                                            {{ $lang->data['add_payment'] ?? 'Add Payment' }}
+                                        </a>
+                                    </div>
+                                @endif
+                            @else
                                 <div class="col-12">
-                                    <a data-bs-toggle="modal" data-bs-target="#addpayment" type="button"
-                                        class="badge badge-success mb-3 w-100 py-3 fw-600">
-                                        {{ $lang->data['add_payment'] ?? 'Add Payment' }}
+                                    <a type="button" class="badge badge-light disabled mb-3 w-100 py-3 fw-600">
+                                        {{ $lang->data['fully_paid'] ?? 'Fully Paid' }}
                                     </a>
                                 </div>
                             @endif
-                        @else
                             <div class="col-12">
-                                <a type="button" class="badge badge-light disabled mb-3 w-100 py-3 fw-600">
-                                    {{ $lang->data['fully_paid'] ?? 'Fully Paid' }}
+                                <a href="{{ url('admin/orders/print-order/' . $order->id) }}" target="_blank"
+                                    type="button" class="btn btn-icon btn-warning mb-0 w-100">
+                                    {{ $lang->data['print_invoice'] ?? 'Print Invoice' }}
                                 </a>
                             </div>
-                        @endif
-                        <div class="col-12">
-                            <a href="{{ url('admin/orders/print-order/' . $order->id) }}" target="_blank"
-                                type="button" class="btn btn-icon btn-warning mb-0 w-100">
-                                {{ $lang->data['print_invoice'] ?? 'Print Invoice' }}
-                            </a>
-                        </div>
-                        @if (Auth::user()->user_type == 1)
-                            <div class="col-12">
-                                <button type="button" class="btn btn-icon btn-danger mt-3 py-3 w-100"
-                                    wire:click="deleteOrder({{ $order->id }})">
-                                    {{ $lang->data['delete_order'] ?? 'Delete Order' }}
-                                </button>
-                            </div>
-                        @endif
+                            @if (Auth::user()->user_type == 1)
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-icon btn-danger mt-3 py-3 w-100"
+                                        wire:click="deleteOrder({{ $order->id }})">
+                                        {{ $lang->data['delete_order'] ?? 'Delete Order' }}
+                                    </button>
+                                </div>
+                            @endif
 
+                        
                     </div>
                 </div>
             </div>

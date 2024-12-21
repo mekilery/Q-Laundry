@@ -75,11 +75,24 @@
                                                     class="font-weight-bold">{{ \Carbon\Carbon::parse($item->order_date)->format('d/m/y') }}</span>
                                             </p>
                                             <p class="d-flex justify-content-between text-sm px-3 mb-0">
-                                                <span
-                                                    class="me-2">{{ $lang->data['delivery_date'] ?? 'Delivery Date' }}:</span>
+                                                
+                                            @if ($item->status == 3)
+                                                    <span class="me-2">{{ $lang->data['delivered_on'] ?? 'Delivered On' }}:</span>
                                                 <span
                                                     class="font-weight-bold">{{ \Carbon\Carbon::parse($item->delivery_date)->format('d/m/y') }}</span>
+                                                @elseif ($item->status == 4)
+                                                    <span class="me-2">{{ $lang->data['returned_on'] ?? 'Returned On' }}:</span>
+                                                <span
+                                                    class="font-weight-bold"> {{ \Carbon\Carbon::parse($item->delivery_date)->format('d/m/y') }}</span>
+                                                @else
+                                                    <span
+                                                    class="me-2">{{ $lang->data['delivery_date'] ?? 'To be Delivered on' }}:</span>
+                                                <span
+                                                    class="font-weight-bold">{{ \Carbon\Carbon::parse($item->delivery_date)->format('d/m/y') }}</span>
+                                                    @endif
                                             </p>
+                                                
+                                             
                                         </td>
                                         <td>
                                             <p class="text-sm px-3 font-weight-bold mb-0">
