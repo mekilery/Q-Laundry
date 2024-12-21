@@ -27,31 +27,42 @@ class OrderStatusScreen extends Component
             /* if session has no selected language */
             $this->lang = Translation::where('default',1)->first();
         }
-         
-        $this->pending_orders = Order::where('status',0)->latest()->get();
-        $this->processing_orders = Order::where('status',1)->latest()->get();
-        $this->ready_orders = Order::where('status',2)->latest()->get();
-        }
+    }
     /* change the order status */
     public function changestatus($order,$status)
     {
         $orderz = Order::where('id',$order)->first();
+        $currentDateTime = now();
         switch($status)
         {
             case 'processing':
                 $orderz->status = 1;
+                $orderz->processed_on = $currentDateTime;
                 $orderz->save();
                 $message = sendOrderStatusChangeSMS($orderz->id,1);
                 break;
             case 'ready':
                 $orderz->status = 2;
+                $orderz->processed_on = $currentDateTime;
                 $orderz->save();
                 $message = sendOrderStatusChangeSMS($orderz->id,2);
+                break;
+            case 'delivered':
+                $orderz->status = 3;
+                $orderz->delivered_on = $currentDateTime;
+                $orderz->save();
+                $message = sendOrderStatusChangeSMS($orderz->id,3);
+                break;
+            case 'returned':
+                $orderz->status = 4;
+                $orderz->returned_on = $currentDateTime;
+                $orderz->save();
+                $message = sendOrderStatusChangeSMS($orderz->id,4);
                 break;
             case 'pending':
                 $orderz->status = 0;
                 $orderz->save();
-                $message = sendOrderStatusChangeSMS($orderz->id,3);
+                $message = sendOrderStatusChangeSMS($orderz->id,0);
                 break;
         }
 
@@ -60,5 +71,6 @@ class OrderStatusScreen extends Component
             $this->dispatchBrowserEvent(
                 'alert', ['type' => 'error',  'message' => $message,'title'=>'SMS Error']);
         }
+        $this->dispatchBrowserEvent('alert', ['type' => 'success', 'message' => 'Status Successfully Updated!']);
     }
 }

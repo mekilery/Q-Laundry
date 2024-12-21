@@ -26,7 +26,7 @@
                                                     class="fw-600 ms-2 text-sm text-dark">{{ $item->customer_name ?? ($lang->data['walk_in_customer'] ?? 'Walk In Customer') }}</span>
                                                 <div class="ms-2 mb-0">
                                                     <span
-                                                        class="text-xs">{{ $lang->data['delivery_date'] ?? 'Delivery Date' }}:</span>
+                                                        class="text-xs">{{ $lang->data['delivery_date'] ?? 'To Be Delivered On' }}:</span>
                                                     <span
                                                         class="text-xs fw-600 ms-2">{{ \Carbon\Carbon::parse($item->delivery_date)->format('d/m/Y') }}</span>
                                                 </div>
@@ -67,7 +67,7 @@
                                                     class="fw-600 text-sm ms-2 text-dark">{{ $item->customer_name ?? ($lang->data['walk_in_customer'] ?? 'Walk In Customer') }}</span>
                                                 <div class="ms-2 mb-0">
                                                     <span
-                                                        class="text-xs">{{ $lang->data['delivery_date'] ?? 'Delivery Date' }}:</span>
+                                                        class="text-xs">{{ $lang->data['delivery_date'] ?? 'To Be Delivered On' }}:</span>
                                                     <span
                                                         class="text-xs fw-600 ms-2">{{ \Carbon\Carbon::parse($item->delivery_date)->format('d/m/Y') }}</span>
                                                 </div>
@@ -109,9 +109,9 @@
                                                     class="fw-600 ms-2 text-sm text-dark">{{ $item->customer_name ?? ($lang->data['walk_in_customer'] ?? 'Walk In Customer') }}</span>
                                                 <div class="ms-2 mb-0">
                                                     <span
-                                                        class="text-xs">{{ $lang->data['delivery_date'] ?? 'Delivery Date' }}:</span>
+                                                        class="text-xs">{{ $lang->data['delivery_date'] ?? 'Ready for Delivery From' }}:</span>
                                                     <span
-                                                        class="text-xs fw-600 ms-2">{{ \Carbon\Carbon::parse($item->delivery_date)->format('d/m/Y') }}</span>
+                                                        class="text-xs fw-600 ms-2">{{ \Carbon\Carbon::parse($item->processed_on)->format('d/m/Y') }}</span>
                                                 </div>
                                             </div>
                                             <div><span
@@ -145,12 +145,9 @@
     </div>
     @push('js')
         <script>
-             "use strict";
-            var drake = dragula([document.querySelector('#ready'), document.querySelector('#processing'), document
-                .querySelector('#pending')
-            ]);
+            "use strict";
+            var drake = dragula([document.querySelector('#ready'), document.querySelector('#processing'), document.querySelector('#pending')]);
             drake.on("drop", function(el, target, source, sibling) {
-
                 @this.changestatus(el.id, target.id);
             });
         </script>
