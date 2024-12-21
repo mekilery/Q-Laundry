@@ -696,18 +696,18 @@
                                     $service = \App\Models\Service::where('id', $item->service_id)->first();
                                 @endphp
                                 <div class="row-data"
-                                    style="text-align: center;margin-top: 5px; padding-bottom: 8px; align-items: center">
+                                    style="text-align: center;margin-top: 5px; padding-bottom: 5px; align-items: center">
                                     <div class="item-info" style="width: 82px;text-align: initial;">
-
-                                        <h5 class="item-title"><b>{{ $service->service_name }}</b></h5>
-                                        <h5 class="item-title"><b>[{{ $item->service_name }}]</b></h5>
+                                        <h5 class="item-title">
+                                            <b>{{ $service->service_name }}:</b>[{{ $item->service_name }}]
+                                        </h5>
                                     </div>
                                     {{-- <h5 class="my-5"><b><img src="{{asset('assets/img/service-icons/'.$service->icon)}}" class="avatar avatar-sm me-3 d-flex px-3 py-1" height="25" width="35"></b></h5> --}}
-                                    <h5 class="my-5"><b>{{ getCurrency() }}
+                                    <h5 class="my-5"><b>
                                             {{ number_format($item->service_price, 3) }}</b></h5>
                                     <h5 class="my-5"><b>{{ $item->service_quantity }}</b></h5>
-                                    <h5 class="my-5"><b>{{ getCurrency() }}
-                                            {{ number_format($item->service_detail_total, 3) }}</b></h5>
+                                    <h5 class="my-5"><b>{{ number_format($item->service_detail_total, 3) }}</b>
+                                    </h5>
                                 </div>
                             @endforeach
                             @php
