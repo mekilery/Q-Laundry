@@ -35,13 +35,12 @@ class DailyReport extends Component
     public function report()
     {
         $this->new_order = \App\Models\Order::whereDate('order_date', $this->today)->count();
-        $this->delivered_orders = \App\Models\Order::whereDate('order_date', $this->today)
-            //->where('status', 3)
+        $this->delivered_orders = \App\Models\Order::whereDate('delivered_on', $this->today)
             ->count();
 
         $this->total_sales = \App\Models\Order::whereDate('order_date', $this->today)->sum('total');
 
-        $this->delivered_orders_amount = \App\Models\Order::whereDate('order_date', $this->today)
+        $this->delivered_orders_amount = \App\Models\Order::whereDate('delivered_on', $this->today)
             ->where('status', 3)
             ->sum('total');
 
